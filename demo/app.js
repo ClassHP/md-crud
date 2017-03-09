@@ -1,16 +1,31 @@
-# Angular material crud
-
-Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utilizando $http.
-
-## Configuración del CRUD
-```javascript
-   $scope.crudOptions = {
+angular.module('app', ['ngMaterial', 'md.data.table', 'gettext', 'mdCrudModule'])
+.config(['$mdThemingProvider', function ($mdThemingProvider) {
+    'use strict';
+    $mdThemingProvider.theme('default')
+    .primaryPalette('indigo', { 'default': '800' })
+    .accentPalette('blue-grey', { 'default': '500' })
+    .warnPalette('orange');
+}])
+.run(['mdCrudService', function (mdCrudService) {    
+    mdCrudService.setDefaultOptions({
+        rootApi: 'http://fakerestapi.azurewebsites.net/api',
+        methodPatch: 'PUT'
+    });
+}])
+.controller('mainController', ['$scope', '$timeout', function($scope, $timeout){
+    $scope.crudOptions = {
         entity: 'Books',
         id: 'ID',
         fields: [
             {
                 name: 'Title',
                 label: 'Title',
+                type: 'text',
+                required: true
+            },
+            {
+                name: 'Description',
+                label: 'Description',
                 type: 'text',
                 required: true
             },
@@ -39,15 +54,4 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
     $timeout(function () {
         $scope.crudOptions.refresh();
     });
-```
-
-
-## Configuración global
-```javascript
-angular.module('app').run(['mdCrudService', function (mdCrudService) {    
-    mdCrudService.setDefaultOptions({
-        rootApi: 'http://fakerestapi.azurewebsites.net/api',
-        methodPatch: 'PUT'
-    });
 }]);
-```

@@ -1,0 +1,15 @@
+﻿<md-dialog aria-label="Editar" flex="50">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>{{formTitle | translate}}</h2>
+            <span flex></span>
+            <md-button class="md-icon-button" ng-click="cancelDialog()">
+                <md-icon aria-label="Cerrar">close</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <md-crud-form options="options" ng-model="item" on-open="onOpen" on-edit="onEdit" on-cancel="onCancelDialog" 
+                   on-sussces="onSusscesDialog" template-url="templateUrl" editable="formEditable"></md-crud-form>
+    </md-dialog-content>
+</md-dialog>
