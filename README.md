@@ -3,7 +3,16 @@
 Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utilizando $http.
 
 ## Dependecias
-
+```javascript
+{
+    "angular": "~1.5.*",
+    "angular-animate": "~1.5.*",
+    "angular-aria": "~1.5.*",
+    "angular-gettext": "^2.3.8",
+    "angular-material": "^1.1.1",
+    "angular-material-data-table": "^0.10.10"
+}
+```
 
 ## Configuración del CRUD
 ```javascript
