@@ -2,6 +2,9 @@
 
 Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utilizando $http.
 
+## Dependecias
+
+
 ## Configuración del CRUD
 ```javascript
    $scope.crudOptions = {
@@ -39,6 +42,10 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
     $timeout(function () {
         $scope.crudOptions.refresh();
     });
+```
+## Directiva
+```html
+<md-crud options="crudOptions"></md-crud>
 ```
 
 
