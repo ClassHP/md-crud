@@ -8,7 +8,7 @@ angular.module('app', ['ngMaterial', 'md.data.table', 'gettext', 'mdCrudModule']
 }])
 .run(['mdCrudService', function (mdCrudService) {    
     mdCrudService.setDefaultOptions({
-        rootApi: 'http://fakerestapi.azurewebsites.net/api',
+        rootApi: 'https://fakerestapi.azurewebsites.net/api',
         methodPatch: 'PUT'
     });
 }])
