@@ -55,6 +55,38 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
         $scope.crudOptions.refresh();
     });
 ```
+### Posibles valores para Fields
+| Params | Type | Details |
+| ------ | ---- | ------- |
+| name | String | Nombre del campo. |
+| label | String | Texto a mostrar como cabecera en la columna de la tabla y como etiqueta en el formulario. |
+| type | String | Tipo de campo. Posibles valores: ['text', 'email', 'integer', 'decimal', 'boolean', 'select', 'date']. |
+| multiple | Boolean | Indica si el tipo 'select' sera se selección multiple. |
+| columnHiden | Boolean | Oculta el campo en la tabla. |
+| createHiden | Boolean | Oculta el formulario al crear. |
+| editHiden | Boolean | Oculta el campo en el formulario al editar. |
+| detailHiden | Boolean | Oculta el formulario al ver el detalle. |
+| templateUrl | String | Url de la plantilla a utilizar para personalizar el formulario. Es necesario que no se tenga valor en el campo "name".|
+| columnTemplate | String | Plantilla a utilizar para mostrar el campo en la tabla. |
+| readonly | Boolean | Coloca el campo en solo lectura o deshabilitado. |
+| minlength | Integer | Define la cantidad mínima de caracteres para los campos de texto. |
+| maxlength | Integer | Define la cantidad máxima de caracteres para los campos de texto. |
+| pattern | String | Formato en expreción regular para los campos de texto. |
+| min | Integer | Define el valor mínimo para los campos numericos. |
+| max | Integer | Define el valor máximo para los campos numericos. |
+| step | Integer | Define el valor de salto para campos numericos. |
+| minDate | Date | Define la fecha menor a ingresar en el campo 'date'. |
+| maxDate | Date | Define la fecha mayor a ingresar en el campo 'date'. |
+
+> Valores por defecto
+```javascript
+{
+    columnHiden: false,
+    createHiden: false,
+    editHiden: false,
+    detailHiden: false
+}
+```
 ## Directiva
 ```html
 <md-crud options="crudOptions"></md-crud>
