@@ -3,7 +3,7 @@
 Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utilizando $http.
 
 ## Demo
-[Aplicación Demo](https://cdn.rawgit.com/ClassHP/md-crud/46b2f849/demo/index.html)
+[Aplicación Demo](https://cdn.rawgit.com/ClassHP/md-crud/e8ef789a/demo/index.html)
 
 ## Dependecias
 ```javascript
@@ -11,6 +11,8 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
     "angular": "~1.5.*",
     "angular-animate": "~1.5.*",
     "angular-aria": "~1.5.*",
+    "angular-messages": "~1.5.*",
+    "angular-sanitize": "~1.5.*",
     "angular-gettext": "^2.3.8",
     "angular-material": "^1.1.1",
     "angular-material-data-table": "^0.10.10"
@@ -100,6 +102,8 @@ $scope.crudOptions = {
 | text | String | Texto a usar en el tipo 'select'. |
 | required | Boolean | Indica si el campo es requerido. |
 | flex | String | Personaliza el tamaño y posición del campo en el formulario. |
+| messagePattern | String | Personaliza el mensaje a mostrar cuando no se cumpla la expresion regular. |
+| rows | Integer | Cantidad de filas iniciales en el formulatio del tipo 'textarea'. |
 
 ## Directiva
 ```html
