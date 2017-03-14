@@ -60,6 +60,11 @@
                     if(pr === null || pr === undefined) delete obj[prop]; 
                 }
                 return obj;
+            },
+            evalFunction: function(opt, model) {
+                if(angular.isFunction(opt))
+                    return opt(model);
+                return opt;
             }
         };
     }

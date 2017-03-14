@@ -1,54 +1,66 @@
-﻿<md-content layout-padding>
+﻿<div layout-padding>
     <form name="formCrud" ng-submit="formCrud.$valid && save()" layout="row" layout-wrap>
         <div ng-repeat="field in fields" flex="{{field.flex || 'grow'}}" ng-if="(formType=='create' && !field.createHiden) || (formType=='edit' && !field.editHiden) || (formType=='detail' && !field.detailHiden)">
             <div ng-if="field.templateUrl" ng-include="field.templateUrl"></div>
-            <md-input-container class="md-block" flex ng-if="(field.type == 'text' || !field.type) && field.name">
+            <md-input-container class="md-block" flex ng-if="(ef(field.type, item) == 'text' || !ef(field.type, item)) && field.name">
                 <label>{{field.label | translate}}</label>
                 <input ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required"
-                        ng-readonly="field.readonly || readonly" ng-minlength="field.minlength"
+                        ng-disabled="field.readonly || readonly" ng-minlength="field.minlength"
                         ng-maxlength="field.maxlength"
                        ng-pattern="field.pattern">
                 <div ng-messages="formCrud[field.name].$error">
                     <div ng-message="required"><translate>Este campo es requerido.</translate></div>
                     <div ng-message="minlength"><translate>Mínimo de caracteres</translate> ({{field.minlength}}).</div>
                     <div ng-message="maxlength"><translate>Máximo de caracteres</translate> ({{field.maxlength}}).</div>
-                    <div ng-message="pattern">{{field.patternErrorMessage || ('El valor ingresado no tiene el formato correcto' | translate)}}</div>
+                    <div ng-message="pattern">{{field.messagePattern || ('El valor ingresado no tiene el formato correcto' | translate)}}</div>
                 </div>
             </md-input-container>
-            <md-input-container class="md-block" flex ng-if="field.type == 'email'">
+            <md-input-container class="md-block" flex ng-if="ef(field.type, item) == 'textarea'">
+                <label>{{field.label | translate}}</label>
+                <textarea ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required"
+                        ng-disabled="field.readonly || readonly" ng-minlength="field.minlength"
+                        ng-maxlength="field.maxlength" rows="{{ field.rows || 3 }}" md-select-on-focus></textarea>
+                <div ng-messages="formCrud[field.name].$error">
+                    <div ng-message="required"><translate>Este campo es requerido.</translate></div>
+                    <div ng-message="minlength"><translate>Mínimo de caracteres</translate> ({{field.minlength}}).</div>
+                    <div ng-message="maxlength"><translate>Máximo de caracteres</translate> ({{field.maxlength}}).</div>
+                    <div ng-message="pattern">{{field.messagePattern || ('El valor ingresado no tiene el formato correcto' | translate)}}</div>
+                </div>
+            </md-input-container>
+            <md-input-container class="md-block" flex ng-if="ef(field.type, item) == 'email'">
                 <label>{{field.label | translate}}</label>
                 <input ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" type="email"
-                       ng-readonly="field.readonly || readonly" ng-minlength="field.minlength"
+                       ng-disabled="field.readonly || readonly" ng-minlength="field.minlength"
                        ng-maxlength="field.maxlength"
                        ng-pattern="field.pattern">
                 <div ng-messages="formCrud[field.name].$error">
                     <div ng-message="required"><translate>Este campo es requerido.</translate></div>
                     <div ng-message="minlength"><translate>Mínimo de caracteres</translate> ({{field.minlength}}).</div>
                     <div ng-message="maxlength"><translate>Máximo de caracteres</translate> ({{field.maxlength}}).</div>
-                    <div ng-message="pattern">{{field.patternErrorMessage || ('El valor ingresado no tiene el formato correcto' | translate)}}</div>
+                    <div ng-message="pattern">{{field.messagePattern || ('El valor ingresado no tiene el formato correcto' | translate)}}</div>
                 </div>
             </md-input-container>
-            <md-input-container class="md-block" flex ng-if="field.type == 'integer'">
+            <md-input-container class="md-block" flex ng-if="ef(field.type, item) == 'integer'">
                 <label>{{field.label | translate}}</label>
                 <input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required"
-                       ng-readonly="field.readonly || readonly" ng-min="field.min" ng-max="field.max" step="{{field.step || 1}}">
+                       ng-disabled="field.readonly || readonly" ng-min="field.min" ng-max="field.max" step="{{field.step || 1}}">
                 <div ng-messages="formCrud[field.name].$error">
                     <div ng-message="required"><translate>Este campo es requerido.</translate></div>
                     <div ng-message="min"><translate>Valor mínimo</translate> ({{field.min}}).</div>
                     <div ng-message="max"><translate>Valor máximo</translate> ({{field.max}}).</div>
                 </div>
             </md-input-container>
-            <md-input-container class="md-block" flex ng-if="field.type == 'decimal'">
+            <md-input-container class="md-block" flex ng-if="ef(field.type, item) == 'decimal'">
                 <label>{{field.label | translate}}</label>
                 <input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required"
-                       ng-readonly="field.readonly || readonly" ng-min="field.min" ng-max="field.max" step="{{field.step || any}}">
+                       ng-disabled="field.readonly || readonly" ng-min="field.min" ng-max="field.max" step="{{field.step || 'any'}}">
                 <div ng-messages="formCrud[field.name].$error">
                     <div ng-message="required"><translate>Este campo es requerido.</translate></div>
                     <div ng-message="min"><translate>Valor mínimo</translate> ({{field.min}}).</div>
                     <div ng-message="max"><translate>Valor máximo</translate> ({{field.max}}).</div>
                 </div>
             </md-input-container>
-            <div class="md-block" flex ng-if="field.type == 'image'">
+            <div class="md-block" flex ng-if="ef(field.type, item) == 'image'">
                 <lf-ng-md-file-input name="{{field.name | translate}}" lf-files="files[field.name]" lf-mimetype="image/*"
                                         lf-placeholder="{{field.label}}" lf-browse-label="Abrir" lf-remove-label="Eliminar">
                 </lf-ng-md-file-input>
@@ -57,28 +69,29 @@
                 </div>
                 <br />
             </div>
-            <div class="md-block" flex ng-if="field.type == 'map'">
+            <div class="md-block" flex ng-if="ef(field.type, item) == 'map'">
                 <ng-map zoom="{{field.zoom || 11}}" center="{{item[field.lat]}},{{item[field.lng]}}">
                     <marker position="{{item[field.lat]}},{{item[field.lng]}}" title="drag me" draggable="true" on-dragend="onMarkerDrag()" data="{{field}}"></marker>
                 </ng-map>
             </div>
-            <md-input-container class="md-block" flex ng-if="field.type == 'boolean'">
+            <md-input-container class="md-block" flex ng-if="ef(field.type, item) == 'boolean'">
                 <md-switch ng-model="item[field.name]" ng-disabled="field.readonly || readonly" aria-label="field.label">
                     {{field.label | translate}}
                 </md-switch>
             </md-input-container>
-            <md-input-container class="md-block" flex ng-if="field.type == 'select'">
+            <md-input-container class="md-block" flex ng-if="ef(field.type, item) == 'select'">
                 <label>{{field.label | translate}}</label>
-                <md-select ng-model="item[field.name]" ng-if="field.multiple" multiple ng-disabled="field.readonly || readonly">
-                    <md-option ng-value="mdSelectItem[field.value]" ng-repeat="mdSelectItem in field.data()">{{mdSelectItem[field.text]}}</md-option>
+                <md-select ng-model="item[field.name]" ng-if="field.multiple" multiple ng-disabled="field.readonly || readonly" ng-required="field.required">
+                    <md-option ng-value="mdSelectItem[field.value || 'value']" ng-repeat="mdSelectItem in ef(field.data, item)">{{mdSelectItem[field.text || 'text']}}</md-option>
                 </md-select>
-                <md-select ng-model="item[field.name]" ng-if="!field.multiple" ng-disabled="field.readonly || readonly">
-                    <md-option ng-value="mdSelectItem[field.value]" ng-repeat="mdSelectItem in field.data()">{{mdSelectItem[field.text]}}</md-option>
+                <md-select ng-model="item[field.name]" ng-if="!field.multiple" ng-disabled="field.readonly || readonly" ng-required="field.required">
+                    <md-option ng-if="!field.required"></md-option>
+                    <md-option ng-value="mdSelectItem[field.value || 'value']" ng-repeat="mdSelectItem in ef(field.data, item)">{{mdSelectItem[field.text || 'text']}}</md-option>
                 </md-select>
             </md-input-container>
-            <md-input-container class="md-block" flex ng-if="field.type == 'date'">
+            <md-input-container class="md-block" flex ng-if="ef(field.type, item) == 'date'">
                 <label>{{field.label | translate}}</label>
-                <md-datepicker ng-model="item[field.name]" md-min-date="field.minDate" md-max-date="field.maxDate"></md-datepicker>                
+                <md-datepicker ng-model="item[field.name]" md-min-date="field.minDate" md-max-date="field.maxDate" ng-disabled="field.readonly || readonly" ng-required="field.required"></md-datepicker>                
                 <div ng-messages="formCrud[field.name].$error">
                     <div ng-message="valid">The entered value is not a date!</div>
                     <div ng-message="required">This date is required!</div>
@@ -94,4 +107,4 @@
             <md-button class="md-raised md-primary" type="submit" ng-disabled="readonly"><translate>Save</translate></md-button>
         </div>
     </form>
-</md-content>
+</div>

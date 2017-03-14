@@ -29,6 +29,8 @@
             var options = $scope.options;
             $scope.fields = options.fields;
             $scope.readonly = $scope.editable == false;
+            
+            $scope.ef = toolsService.evalFunction;
 
             var idValue = $scope.ngModel[options.id];
             $scope.formTitle = idValue ? (($scope.editable) ? "Editar" : "Detalle") : "Nuevo";

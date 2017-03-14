@@ -5,9 +5,9 @@
         .module('mdCrudModule')
         .directive('mdCrud', crudDirective);
 
-    crudDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$mdDialog', 'gettextCatalog'];
+    crudDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$mdDialog', 'gettextCatalog', '$interpolate'];
 
-    function crudDirective(crudService, toolsService, $mdDialog, gettextCatalog) {
+    function crudDirective(crudService, toolsService, $mdDialog, gettextCatalog, $interpolate) {
         var directive = {
             link: link,
             restrict: 'EA',
@@ -28,6 +28,12 @@
             var getParams = {};
             $scope.rowCreate = null;
 
+            $scope.ef = toolsService.evalFunction;
+
+            $scope.stringToHtml = function(str, data) {
+                return $interpolate(str)(data);
+            }
+
             $scope.table = {
                 rows: [],
                 refresh: function (params) {
@@ -43,6 +49,7 @@
                 },
                 create: function (ev) {
                     ev.stopPropagation();
+                    $scope.rowSelected = null;
                     $scope.rowCreate = {};
                     if ($scope.formType == "window") {
                         showForm({}, true, ev).then(function (item) {
@@ -64,7 +71,11 @@
                 detail: function (row, ev) {
                     ev.stopPropagation()
                     if ($scope.formType == "inline") {
-                        $scope.selectRow(row, false);
+                        
+                        if ($scope.rowSelected == row)
+                            $scope.rowSelected = null; 
+                        else
+                            $scope.selectRow(row, false);
                     }
                     if ($scope.formType == "window") {
                         showForm(row, false, ev).then(function (item) {
@@ -73,6 +84,7 @@
                     }
                 },
                 delete: function (rowId, ev) {
+                    $scope.rowSelected = null; 
                     ev.stopPropagation()
                     var t = this;
                     var index = this.rows.findIndex(function (r) {
@@ -164,8 +176,8 @@
             };
 
             $scope.selectRow = function (item, editable) {
-                $scope.formEditable = editable;
                 $scope.rowSelected = item;
+                $scope.formEditable = editable;
             };
 
             var formController = function ($scope, $mdDialog, crudService, item, options) {

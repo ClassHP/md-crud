@@ -1,4 +1,4 @@
-angular.module('app', ['ngMaterial', 'md.data.table', 'gettext', 'mdCrudModule'])
+angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'md.data.table', 'gettext', 'mdCrudModule'])
 .config(['$mdThemingProvider', function ($mdThemingProvider) {
     'use strict';
     $mdThemingProvider.theme('default')
@@ -24,27 +24,43 @@ angular.module('app', ['ngMaterial', 'md.data.table', 'gettext', 'mdCrudModule']
                 required: true
             },
             {
-                name: 'Description',
-                label: 'Description',
-                type: 'text',
-                required: true
+                name: 'type',
+                label: 'Type',
+                type: 'select',
+                columnHiden: true,
+                detailHiden: true,
+                data: [
+                    { value: 'text', text: 'Text' },
+                    { value: 'integer', text: 'Integer' },
+                    { value: 'decimal', text: 'Decimal' }
+                ],
+                flex: '33'
             },
             {
                 name: 'PageCount',
                 label: 'Page count',
-                type: 'integer',
-                required: true
+                type: function(item) { return item.type || 'text'; },
+                required: true,
+                flex: '33'
             },
             {
                 name: 'PublishDate',
                 label: 'Publish date',
                 type: 'date',
+                required: true,
+                columnTemplate: '<strong>{{PublishDate | date:"short"}}</strong>',
+                flex: '33'
+            },
+            {
+                name: 'Description',
+                label: 'Description',
+                type: 'textarea',
                 required: true
             },
             {
                 name: 'Excerpt',
                 label: 'Excerpt',
-                type: 'text',
+                type: 'textarea',
                 required: true,
                 columnHiden: true,
             }

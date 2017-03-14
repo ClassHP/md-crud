@@ -19,48 +19,66 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
 
 ## Configuración del CRUD
 ```javascript
-   $scope.crudOptions = {
-        entity: 'Books',
-        id: 'ID',
-        fields: [
-            {
-                name: 'Title',
-                label: 'Title',
-                type: 'text',
-                required: true
-            },
-            {
-                name: 'PageCount',
-                label: 'Page count',
-                type: 'integer',
-                required: true
-            },
-            {
-                name: 'PublishDate',
-                label: 'Publish date',
-                type: 'date',
-                required: true
-            },
-            {
-                name: 'Excerpt',
-                label: 'Excerpt',
-                type: 'text',
-                required: true,
-                columnHiden: true,
-            }
-        ]
-    };    
-    
-    $timeout(function () {
-        $scope.crudOptions.refresh();
-    });
+$scope.crudOptions = {
+    entity: 'Books',
+    id: 'ID',
+    fields: [
+        {
+            name: 'Title',
+            label: 'Title',
+            type: 'text',
+            required: true
+        },
+        {
+            name: 'type',
+            label: 'Type',
+            type: 'select',
+            columnHiden: true,
+            detailHiden: true,
+            data: [
+                { value: 'text', text: 'Text' },
+                { value: 'integer', text: 'Integer' },
+                { value: 'decimal', text: 'Decimal' }
+            ],
+            flex: '33'
+        },
+        {
+            name: 'PageCount',
+            label: 'Page count',
+            type: function(item) { return item.type || 'text'; },
+            required: true,
+            flex: '33'
+        },
+        {
+            name: 'PublishDate',
+            label: 'Publish date',
+            type: 'date',
+            required: true,
+            columnTemplate: '<strong>{{PublishDate | date:"short"}}</strong>',
+            flex: '33'
+        },
+        {
+            name: 'Description',
+            label: 'Description',
+            type: 'textarea',
+            required: true
+        },
+        {
+            name: 'Excerpt',
+            label: 'Excerpt',
+            type: 'textarea',
+            required: true,
+            columnHiden: true,
+        }
+    ]
+}; 
 ```
 ### Posibles valores para Fields
 | Params | Type | Details |
 | ------ | ---- | ------- |
 | name | String | Nombre del campo. |
 | label | String | Texto a mostrar como cabecera en la columna de la tabla y como etiqueta en el formulario. |
-| type | String | Tipo de campo. Posibles valores: ['text', 'email', 'integer', 'decimal', 'boolean', 'select', 'date']. |
+| type | String, Function | Tipo de campo. Posibles valores: ['text', 'textarea', 'email', 'integer', 'decimal', 'boolean', 'select', 'date']. |
 | multiple | Boolean | Indica si el tipo 'select' sera se selección multiple. |
 | columnHiden | Boolean | Oculta el campo en la tabla. |
 | createHiden | Boolean | Oculta el formulario al crear. |
@@ -77,16 +95,12 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
 | step | Integer | Define el valor de salto para campos numericos. |
 | minDate | Date | Define la fecha menor a ingresar en el campo 'date'. |
 | maxDate | Date | Define la fecha mayor a ingresar en el campo 'date'. |
+| data | Array, Function | Función que devuelve los datos a usar en el tipo 'select'. |
+| value | String | Valor a usar en el tipo 'select'. |
+| text | String | Texto a usar en el tipo 'select'. |
+| required | Boolean | Indica si el campo es requerido. |
+| flex | String | Personaliza el tamaño y posición del campo en el formulario. |
 
-> Valores por defecto
-```javascript
-{
-    columnHiden: false,
-    createHiden: false,
-    editHiden: false,
-    detailHiden: false
-}
-```
 ## Directiva
 ```html
 <md-crud options="crudOptions"></md-crud>
