@@ -25,7 +25,7 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
 
 ## NPM
 ```sh
-$ npm install md-crud
+$ npm install md-crud --save
 ```
 
 ## Configuración del CRUD
