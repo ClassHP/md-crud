@@ -1,0 +1,40 @@
+{
+  "name": "md-crud",
+  "description": "Angular material directive to create customizable CRUD forms.",
+  "main": "dist/md-crud.js",
+  "authors": [
+    "Heli Perez <heliperez@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "angularjs",
+    "angular-material",
+    "angular-directives",
+    "angular-components",
+    "crud",
+    "restfull"
+  ],
+  "homepage": "https://github.com/ClassHP/md-crud",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "temp",
+    "src",
+    "demo",
+    "gulpfile.js"
+  ],
+  "dependencies": {
+    "angular": "~1.5.*",
+    "angular-animate": "~1.5.*",
+    "angular-aria": "~1.5.*",
+    "angular-messages": "~1.5.*",
+    "angular-sanitize": "~1.5.*",
+    "angular-material": "^1.1.3",
+    "angular-gettext": "^2.3.8",
+    "angular-material-data-table": "^0.10.10",
+    "mdPickers": "^0.7.5",
+    "moment": "^2.17.1"
+  }
+}
