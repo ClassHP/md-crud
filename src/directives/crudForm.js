@@ -5,9 +5,9 @@
         .module('mdCrudModule')
         .directive('mdCrudForm', crudFormDirective);
 
-    crudFormDirective.$inject = ['mdCrudService', 'mdCrudToolsService'];
+    crudFormDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$injector'];
 
-    function crudFormDirective(crudService, toolsService) {
+    function crudFormDirective(crudService, toolsService, $injector) {
         var directive = {
             link: link,
             restrict: 'EA',
@@ -40,6 +40,20 @@
             $scope.getContentUrl = function(elem,attrs) {
                 return $scope.templateUrl || '/views/crudForm.html'
             }
+            var mdpTimePicker = null;
+            try{
+                mdpTimePicker = $injector.get('$mdpTimePicker');
+            }catch(e){
+            }
+            $scope.showTimePicker = function(ev, item, fieldName) {
+                if(mdpTimePicker != null) {
+                    mdpTimePicker(item[fieldName], {
+                        targetEvent: ev
+                    }).then(function(selectedDate) {
+                        item[fieldName] = selectedDate;
+                    });
+                }
+            } 
 
             if ($scope.onOpen)
                 $scope.onOpen($scope.item);

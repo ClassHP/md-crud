@@ -1,4 +1,4 @@
-angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'md.data.table', 'gettext', 'mdCrudModule'])
+angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'md.data.table', 'gettext', 'mdCrudModule', 'mdPickers'])
 .config(['$mdThemingProvider', function ($mdThemingProvider) {
     'use strict';
     $mdThemingProvider.theme('default')
@@ -34,22 +34,22 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
                     { value: 'integer', text: 'Integer' },
                     { value: 'decimal', text: 'Decimal' }
                 ],
-                flex: '33'
+                flex: '25'
             },
             {
                 name: 'PageCount',
                 label: 'Page count',
                 type: function(item) { return item.type || 'text'; },
                 required: true,
-                flex: '33'
+                flex: '10'
             },
             {
                 name: 'PublishDate',
                 label: 'Publish date',
-                type: 'date',
+                type: 'datetime',
                 required: true,
                 columnTemplate: '<strong>{{PublishDate | date:"short"}}</strong>',
-                flex: '33'
+                flex: '50'
             },
             {
                 name: 'Description',
@@ -64,7 +64,12 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
                 required: true,
                 columnHiden: true,
             }
-        ]
+        ],
+        form: {
+            onEdit: function (data) {
+                data.PublishDate = new Date(data.PublishDate);
+            }
+        }
     };    
     
     $timeout(function () {

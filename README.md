@@ -13,9 +13,11 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
     "angular-aria": "~1.5.*",
     "angular-messages": "~1.5.*",
     "angular-sanitize": "~1.5.*",
+    "angular-material": "^1.1.3",
+    "angular-material-data-table": "^0.10.10",
     "angular-gettext": "^2.3.8",
-    "angular-material": "^1.1.1",
-    "angular-material-data-table": "^0.10.10"
+    "mdPickers": "^0.7.5", //Opcional (para los tipos 'time' y 'datetaime')
+    "moment": "^2.17.1" //Requerido por mdPickers
 }
 ```
 
@@ -54,7 +56,7 @@ $scope.crudOptions = {
         {
             name: 'PublishDate',
             label: 'Publish date',
-            type: 'date',
+            type: 'datetime',
             required: true,
             columnTemplate: '<strong>{{PublishDate | date:"short"}}</strong>',
             flex: '33'
@@ -80,7 +82,7 @@ $scope.crudOptions = {
 | ------ | ---- | ------- |
 | name | String | Nombre del campo. |
 | label | String | Texto a mostrar como cabecera en la columna de la tabla y como etiqueta en el formulario. |
-| type | String, Function | Tipo de campo. Posibles valores: ['text', 'textarea', 'email', 'integer', 'decimal', 'boolean', 'select', 'date']. |
+| type | String, Function | Tipo de campo. Posibles valores: ['text', 'textarea', 'email', 'integer', 'decimal', 'boolean', 'select', 'date', 'time', 'datetime']. |
 | multiple | Boolean | Indica si el tipo 'select' sera se selección multiple. |
 | columnHiden | Boolean | Oculta el campo en la tabla. |
 | createHiden | Boolean | Oculta el formulario al crear. |

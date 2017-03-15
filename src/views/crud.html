@@ -39,6 +39,8 @@
                                 </span>
                                 <image ng-switch-when="image" ng-src="{{row[field.name]}}" style="max-height:90px"></image>
                                 <span ng-switch-when="date">{{ row[field.name] | date:'shortDate' }}</span>
+                                <span ng-switch-when="time">{{ row[field.name] | date:'shortTime' }}</span>
+                                <span ng-switch-when="datetime">{{ row[field.name] | date:'short' }}</span>
                                 <span ng-switch-default>
                                     {{row[field.name] | translate}}
                                 </span>
