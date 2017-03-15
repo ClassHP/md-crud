@@ -23,9 +23,14 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
 ## CDN
 [https://cdn.rawgit.com/ClassHP/md-crud/0.1.1/dist/md-crud.min.js](https://cdn.rawgit.com/ClassHP/md-crud/0.1.1/dist/md-crud.min.js)
 
-## NPM
+## npm
 ```sh
 $ npm install md-crud --save
+```
+
+## bower
+```sh
+$ bower install md-crud --save
 ```
 
 ## Configuración del CRUD
