@@ -20,6 +20,13 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
     "moment": "^2.17.1" //Requerido por mdPickers
 }
 ```
+## CDN
+[https://cdn.rawgit.com/ClassHP/md-crud/0.1.1/dist/md-crud.min.js](https://cdn.rawgit.com/ClassHP/md-crud/0.1.1/dist/md-crud.min.js)
+
+## NPM
+```sh
+$ npm install md-crud
+```
 
 ## Configuración del CRUD
 ```javascript

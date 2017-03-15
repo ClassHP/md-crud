@@ -1,0 +1,9 @@
+# Any hidden files
+**/.*
+
+node_modules
+demo
+src
+temp
+gulpfile.js
+bower.json
