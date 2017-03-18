@@ -8,6 +8,14 @@
     crudFormDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$injector'];
 
     function crudFormDirective(crudService, toolsService, $injector) {
+        
+        //Optional services
+        var mdpTimePicker;
+        try {
+            mdpTimePicker = $injector.get('$mdpTimePicker');
+        } catch(e) {
+        }
+
         var directive = {
             link: link,
             restrict: 'EA',
@@ -26,27 +34,30 @@
         return directive;
 
         function link($scope, element, attrs) {
+            var text = crudService.text;
+            $scope.text = text;
+
+            var translate = crudService.options.translate;
+            $scope.translate = translate;
+            
             var options = $scope.options;
             $scope.fields = options.fields;
             $scope.readonly = $scope.editable == false;
             
             $scope.ef = toolsService.evalFunction;
 
+            $scope.isLoading = false;
+
             var idValue = $scope.ngModel[options.id];
-            $scope.formTitle = idValue ? (($scope.editable) ? "Editar" : "Detalle") : "Nuevo";
+            $scope.formTitle = idValue ? (($scope.editable) ? text.editTitle : text.detailTitle) : text.createTitle;
             $scope.formType = idValue ? (($scope.editable) ? "edit" : "detail") : "create";
             $scope.fields = options.fields;
             $scope.item = {};
             $scope.getContentUrl = function(elem,attrs) {
                 return $scope.templateUrl || '/views/crudForm.html'
             }
-            var mdpTimePicker = null;
-            try{
-                mdpTimePicker = $injector.get('$mdpTimePicker');
-            }catch(e){
-            }
             $scope.showTimePicker = function(ev, item, fieldName) {
-                if(mdpTimePicker != null) {
+                if(mdpTimePicker) {
                     mdpTimePicker(item[fieldName], {
                         targetEvent: ev
                     }).then(function(selectedDate) {
@@ -58,18 +69,21 @@
             if ($scope.onOpen)
                 $scope.onOpen($scope.item);
 
-            if (idValue) {
+            if (idValue) {                
+                $scope.isLoading = true;
                 crudService.getById({
                     entity: options.entity, 
                     id: idValue, 
                     rootApi: options.rootApi
                 }).then(function (data) {
-                    $scope.item = data;
+                    $scope.item = data;                    
                     if ($scope.onEdit)
                         $scope.onEdit($scope.item);
+                    $scope.isLoading = false;
                 }, function(data) {
                     if ($scope.onError)
                         $scope.onError(data);
+                    $scope.cancel(data);
                 });
             }
 
@@ -90,10 +104,12 @@
                         rootApi: options.rootApi
                     });
                 }
+                $scope.isLoading = true;
                 promise.then(function (data) {
                     angular.copy(data, $scope.ngModel);
                     if ($scope.onSussces)
                         $scope.onSussces(data, $scope.formType);
+                    $scope.isLoading = false;
                 }, function (data) {
                     if (data.details) {
                         $scope.errors = data.details;
@@ -102,13 +118,14 @@
                         $scope.errors = [data.error];
                     }
                     if ($scope.onError)
-                        $scope.onError(data);                    
+                        $scope.onError(data);    
+                    $scope.isLoading = false;                
                 });
 
             }
-            $scope.cancel = function () {
+            $scope.cancel = function (data) {
                 if ($scope.onCancel)
-                    $scope.onCancel($scope.item);
+                    $scope.onCancel(data);
             }
             $scope.onMarkerDrag = function (event) {
                 $scope.item[this.data.lat] = event.latLng.lat();

@@ -6,7 +6,7 @@
     function fnService($mdDialog) {
         return {
             showConfirm: function (title, message, okText, cancelText) {
-                okText = okText || "Si";
+                okText = okText || "Yes";
                 cancelText = cancelText || "No";
                 var confirm = $mdDialog.confirm()
                       .title(title)
@@ -18,14 +18,15 @@
 
                 return $mdDialog.show(confirm);
             },
-            showAlert: function (title, message) {
+            showAlert: function (title, message, okText) {
+                okText = okText || "Ok";
                 $mdDialog.show(
                     $mdDialog.alert()
                     .clickOutsideToClose(true)
                     .title(title)
                     .ariaLabel(title)
                     .textContent(message)
-                    .ok('Continuar')
+                    .ok(okText)
                 );
             },
             getBase64: function (file) {
@@ -65,6 +66,13 @@
                 if(angular.isFunction(opt))
                     return opt(model);
                 return opt;
+            },
+            evalDefined: function (optArray) {
+                for(var i in optArray){
+                    if(angular.isDefined(optArray[i]))
+                        return optArray[i];
+                }
+                return undefined;
             }
         };
     }

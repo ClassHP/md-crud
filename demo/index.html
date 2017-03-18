@@ -16,15 +16,18 @@
     <link href="https://cdn.rawgit.com/alenaksu/mdPickers/0.7.4/dist/mdPickers.min.css" rel="stylesheet">
   </head>
 
-  <body layout="column">
+  <body layout="column" ng-controller="mainController">
 
     <md-toolbar>
       <div class="md-toolbar-tools">
         <div class="md-title">Angular material crud</div>
+        <div flex></div>
+        <md-button ng-click="btnSpanish()">Spanish</md-button>
+        <md-button ng-click="btnEnglish()">English</md-button>
       </div>
     </md-toolbar>
 
-    <md-content laout="column" flex ng-controller="mainController">
+    <md-content laout="column" flex>
         <md-crud options="crudOptions"></md-crud>
     </md-content>
 

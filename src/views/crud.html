@@ -1,7 +1,7 @@
 ﻿<div layout-margin layout-padding>
     <div>
         <div class="md-default" layout="row" layout-align="start center">
-            <md-button class="md-raised md-primary" ng-click="table.create($event)" ng-if="!options.noCreate"><translate>Nuevo</translate></md-button>
+            <md-button class="md-raised md-primary" ng-click="table.create($event)" ng-if="!options.noCreate" ng-disabled="isLoading">{{translate(text.createOption)}}</md-button>
             <div ng-if="options.templateTools" ng-include="options.templateTools" flex layout="row"></div>
             <div flex></div>
             <div layout="row">
@@ -22,9 +22,9 @@
             <table data-md-table md-progress="table.promise">
                 <thead md-head data-md-order="table.order" md-on-reorder="table.refresh" style="background-color: white">
                     <tr md-row>
-                        <th md-column ng-repeat="field in fields" ng-if="field.columnHiden != true">{{field.label | translate}}</th>
-                        <th md-column style="min-width:132px;width:132px" ng-if="!options.noDelete"></th>
-                        <th md-column style="min-width:60px;width:60px" ng-if="options.noDelete"></th>
+                        <th md-column ng-repeat="field in fields" ng-if="field.columnHiden != true">{{translate(field.label)}}</th>
+                        <th md-column style="min-width:132px;width:132px" ng-if="!options.noDelete && !options.noEdit"></th>
+                        <th md-column style="min-width:60px;width:60px" ng-if="(options.noEdit && !options.noDelete) || (!options.noEdit && options.noDelete)"></th>
                     </tr>
                 </thead>
                 <tbody md-body>
@@ -35,20 +35,21 @@
                         <td md-cell ng-repeat="field in fields" ng-if="field.columnHiden != true">
                             <div ng-switch="ef(field.type, row)" ng-if="!field.columnTemplate">
                                 <span ng-switch-when="boolean">
-                                    <md-switch ng-model="row[field.name]" ng-disabled="true" aria-label="{{field.label | translate}}"></md-switch>
+                                    <md-switch ng-model="row[field.name]" ng-disabled="true" aria-label="{{translate(field.label)}}"></md-switch>
                                 </span>
                                 <image ng-switch-when="image" ng-src="{{row[field.name]}}" style="max-height:90px"></image>
                                 <span ng-switch-when="date">{{ row[field.name] | date:'shortDate' }}</span>
                                 <span ng-switch-when="time">{{ row[field.name] | date:'shortTime' }}</span>
                                 <span ng-switch-when="datetime">{{ row[field.name] | date:'short' }}</span>
+                                <span ng-switch-when="select">{{ getTextSelect(field, row) }}</span>
                                 <span ng-switch-default>
-                                    {{row[field.name] | translate}}
+                                    {{translate(row[field.name])}}
                                 </span>
                             </div>
                             <span ng-if="field.columnTemplate" ng-bind-html="stringToHtml(field.columnTemplate, row)"></span>
                         </td>
                         <td md-cell>
-                            <md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.edit(row, $event)">
+                            <md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.edit(row, $event)" ng-if="!options.noEdit">
                                 <md-icon>&#xE3C9;</md-icon>
                             </md-button>
                             <md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.delete(row[options.id], $event)" ng-if="!options.noDelete">
@@ -69,11 +70,11 @@
                 </tbody>
             </table>
             <md-table-pagination md-limit="table.limit"
-                                 md-limit-options="[10, 20, 30]"
+                                 md-limit-options="table.limitOptions"
                                  md-page="table.page"
                                  md-total="{{(table.rows | filter:searchText).length}}"
                                  md-page-select
-                                 md-label="{{table.labels}}"
+                                 md-label="{{table.labels()}}"
                                  style="background-color: white">
             </md-table-pagination>
         </md-table-container>

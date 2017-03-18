@@ -5,9 +5,9 @@
         .module('mdCrudModule')
         .directive('mdCrud', crudDirective);
 
-    crudDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$mdDialog', 'gettextCatalog', '$interpolate'];
+    crudDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$mdDialog', '$interpolate'];
 
-    function crudDirective(crudService, toolsService, $mdDialog, gettextCatalog, $interpolate) {
+    function crudDirective(crudService, tools, $mdDialog, $interpolate) {
         var directive = {
             link: link,
             restrict: 'EA',
@@ -19,24 +19,47 @@
         return directive;
 
         function link($scope, element, attrs) {
+            var text = crudService.text;
+            $scope.text = text;
+
+            var translate = crudService.options.translate;
+            $scope.translate = translate;
 
             var options = $scope.options;
-            $scope.formType = $scope.formType || options.formType || crudService.options.formType;
+            options.id = options.id || 'id';
+            
+            $scope.formType = tools.evalDefined([attrs.formType, options.formType, crudService.options.formType]);
+            var deleteConfirm = tools.evalDefined([attrs.deleteConfirm, options.deleteConfirm, crudService.options.deleteConfirm]);
+            var autoRefresh = tools.evalDefined([attrs.autoRefresh, options.autoRefresh, crudService.options.autoRefresh]);
+            var getParams = tools.evalDefined([attrs.getParams, options.getParams, {}]);
 
             $scope.fields = options.fields;
             $scope.rowSelected = null;
-            var getParams = {};
             $scope.rowCreate = null;
 
-            $scope.ef = toolsService.evalFunction;
+            $scope.ef = tools.evalFunction;
 
             $scope.stringToHtml = function(str, data) {
                 return $interpolate(str)(data);
             }
 
+            $scope.isLoading = true;
+
+            $scope.getTextSelect = function(field, row) {
+                if(field.getTextSelect)
+                    return field.getTextSelect(field, row);
+                var data = tools.evalFunction(field.data, row);
+                for(var i in data) {
+                    if(data[i][field.value] == row[field.name])
+                        return data[i][field.text];
+                }
+                return row[field.name];
+            }
+
             $scope.table = {
                 rows: [],
                 refresh: function (params) {
+                    $scope.isLoading = true;
                     if (params)
                         getParams = params;
                     $scope.table.promise = crudService.get({ 
@@ -45,6 +68,7 @@
                         rootApi: options.rootApi
                     }).then(function (data) {
                         $scope.table.rows = data;
+                        $scope.isLoading = false;
                     });
                 },
                 create: function (ev) {
@@ -59,13 +83,15 @@
                 },
                 edit: function (row, ev) {
                     ev.stopPropagation();
-                    if ($scope.formType == "inline") {
-                        $scope.selectRow(row, true);
-                    }
-                    if ($scope.formType == "window") {
-                        showForm(row, true, ev).then(function (item) {
-                            //$scope.table.refresh();
-                        });
+                    if(row[options.id]) {
+                        if ($scope.formType == "inline") {
+                            $scope.selectRow(row, true);
+                        }
+                        if ($scope.formType == "window") {
+                            showForm(row, true, ev).then(function (item) {
+                                //$scope.table.refresh();
+                            });
+                        }
                     }
                 },
                 detail: function (row, ev) {
@@ -90,7 +116,7 @@
                     var index = this.rows.findIndex(function (r) {
                         return r[options.id] == rowId;
                     });
-                    toolsService.showConfirm(gettextCatalog.getString("Eliminar"), gettextCatalog.getString("¿Está seguro de eliminar el registro?")).then(function () {
+                    var deleteFunct = function () {
                         crudService.delete({
                             entity: options.entity, 
                             id: rowId, 
@@ -99,21 +125,41 @@
                             t.rows.splice(index, 1);
                         }, function (error) {
                             if (!error)
-                                error = gettextCatalog.getString("No se pudo eliminar el registro, contacte con el administrador del sistema.");
-                            toolsService.showAlert(gettextCatalog.getString('Error al intentar eliminar el registro.'), error);
-                        })
-                    });
+                                error = text.deleteError;
+                            tools.showAlert(translate(text.deleteErrorTitle), translate(error), translate(text.btnAlertOk));
+                        });
+                    };
+                    if(deleteConfirm) {
+                        tools.showConfirm(translate(text.deleteConfirmTitle), translate(text.deleteConfirmMessage), translate(text.deleteConfirmOk), 
+                        translate(text.btnConfirmOk), translate(text.btnConfirmCancel)).then(function () {
+                            deleteFunct();
+                        });
+                    }
+                    else {
+                        deleteFunct();
+                    }
                 },
                 promise: null,
                 order: '',
-                limit: 10,
+                limit: tools.evalDefined([attrs.tableLimit, options.tableLimit, crudService.options.tableLimit]),
+                limitOptions: tools.evalDefined([attrs.limitOptions, options.limitOptions, crudService.options.limitOptions]),
                 page: 1,
                 rowSelection: false,
-                selected: []
+                selected: [],
+                labels: function () { 
+                    return {
+                        page: translate(text.tablePaginationPage),
+                        rowsPerPage: translate(text.tablePaginationRowsPerPage),
+                        of: translate(text.tablePaginationOf)
+                    } 
+                }
             }
 
             options.refresh = function (params) {
                 $scope.table.refresh(params);
+            }
+            if (autoRefresh) {
+                options.refresh();
             }
 
             var showForm = function (item, editable, ev) {
@@ -135,18 +181,6 @@
                 });
             };
 
-            var onTranslate = function () {
-                $scope.table.labels = {
-                    page: gettextCatalog.getString('Página:'),
-                    rowsPerPage: gettextCatalog.getString('Filas por página:'),
-                    of: gettextCatalog.getString('de')
-                }
-            }
-            onTranslate();
-            $scope.$on('gettextLanguageChanged', function () {
-                onTranslate();
-            });
-
             $scope.templateUrl = (options.form || {}).templateUrl;
 
             $scope.onOpen = function (item) {
@@ -159,11 +193,13 @@
                     options.form.onEdit(item);
             };
 
-            $scope.onCancel = function (item) {
+            $scope.onCancel = function (error) {
                 if ((options.form || {}).onCancel)
-                    options.form.onCancel(item);
+                    options.form.onCancel(error);
                 $scope.rowSelected = null;
                 $scope.rowCreate = null;
+                if(error)
+                    tools.showAlert(translate(text.generalErrorTitle), translate(error), translate(text.btnAlertOk));
             };
 
             $scope.onSussces = function (item, type) {
@@ -181,7 +217,7 @@
             };
 
             var formController = function ($scope, $mdDialog, crudService, item, options) {
-                $scope.formTitle = item[options.id] ? (($scope.formEditable) ? "Editar": "Detalle") : "Nuevo";
+                $scope.formTitle = translate(item[options.id] ? (($scope.formEditable) ? text.editTitle : text.detailTitle) : text.createTitle);
                 //$scope.options = options;
                 $scope.item = item;
 

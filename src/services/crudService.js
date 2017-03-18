@@ -32,13 +32,53 @@
             functionData: function(response, resolve, reject) { 
                 resolve(response.data);
             },
-            formType: 'inline'
-        };        
+            formType: 'inline',
+            deleteConfirm: true,
+            tableLimit: 10,
+            limitOptions: [10, 20, 30],
+            translate: function(text) {
+                return text;
+            }
+        };     
+
+        var defaultText = {
+            editTitle: 'Edit',
+            detailTitle: 'Detail',
+            createTitle: 'Create',
+            deleteError: 'Error while trying to delete row',
+            deleteErrorTitle: 'Error deleting',
+            deleteConfirmTitle: 'Delete',
+            deleteConfirmMessage: 'Are you sure you want to delete the row?',
+            tablePaginationPage: 'Page',
+            tablePaginationRowsPerPage: 'Rows per page:',
+            tablePaginationOf: 'of',
+            createOption: 'Create',
+            btnConfirmOk: 'Yes',
+            btnConfirmCancel: 'No',
+            btnAlertOk: 'Ok',
+            generalErrorTitle: 'Error',
+            messageRequired: 'Required',
+            messageMinlength: 'Min length',
+            messageMaxlength: 'Max length',
+            messagePattern: 'Invalid input format.',
+            messageMin: 'Min value',
+            messageMax: 'Max value',
+            messageMimetype: 'Invalid file type.',
+            messageValid: 'Invalid input format.',
+            messageMindate: 'Min date',
+            messageMaxdate: 'Max date',
+            formCancel: 'Cancel',
+            formSubmit: 'Save',
+        };
 
         return {
             options: defaultOptions,
             setDefaultOptions: function(options) {
                 angular.extend(defaultOptions, tools.removeNull(options));
+            },
+            text: defaultText,
+            setDefaultText: function(text) {
+                angular.extend(defaultText, tools.removeNull(text));
             },
             get: function (options) {
                 var httpOptions = {

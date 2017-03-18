@@ -15,7 +15,6 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
     "angular-sanitize": "~1.5.*",
     "angular-material": "^1.1.3",
     "angular-material-data-table": "^0.10.10",
-    "angular-gettext": "^2.3.8",
     "mdPickers": "^0.7.5", //Opcional (para los tipos 'time' y 'datetaime')
     "moment": "^2.17.1" //Requerido por mdPickers
 }
