@@ -131,7 +131,7 @@
                     };
                     if(deleteConfirm) {
                         tools.showConfirm(translate(text.deleteConfirmTitle), translate(text.deleteConfirmMessage), translate(text.deleteConfirmOk), 
-                        translate(text.btnConfirmOk), translate(text.btnConfirmCancel)).then(function () {
+                        translate(text.btnConfirmCancel), translate(text.btnConfirmCancel)).then(function () {
                             deleteFunct();
                         });
                     }
