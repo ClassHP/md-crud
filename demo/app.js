@@ -196,9 +196,4 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
             }
         }
     };  
-    
-    $timeout(function () {
-        $scope.crudOptions.refresh();
-        $scope.crudOptions2.refresh();
-    });
 }]);

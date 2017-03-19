@@ -1,11 +1,30 @@
 {
   "name": "md-crud",
-  "version": "0.1.4",
-  "author": "Heli Perez <heliperez@gmail.com>",
+  "version": "0.1.5",
+  "author": {
+    "name": "Heli Perez",
+    "url": "https://twitter.com/classhp",
+    "email" : "classhp@gmail.com"
+  },
+  "description": "Angular material directive to create customizable CRUD forms.",
+  "keywords": [
+    "angular",
+    "angularjs",
+    "angular-material",
+    "angular-directives",
+    "angular-components",
+    "crud",
+    "restfull",
+    "rest"
+  ],
   "registry": "github",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ClassHP/md-crud"
+    "url": "git://github.com/ClassHP/md-crud.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ClassHP/md-crud/issues",
+    "email" : "classhp@gmail.com"
   },
   "license": "MIT",
   "devDependencies": {

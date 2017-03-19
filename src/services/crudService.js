@@ -40,7 +40,8 @@
             limitOptions: [10, 20, 30],
             translate: function(text) {
                 return text;
-            }
+            },
+            autoRefresh: true,
         };     
 
         var defaultText = {

@@ -88,7 +88,82 @@ $scope.crudOptions = {
     ]
 }; 
 ```
-### Posibles valores para Fields
+### Server side
+```javascript
+$scope.crudOptions2 = {
+    entity: 'characters',
+    id: 'id',
+    noEdit: true,
+    noDelete: true,
+    noCreate: true,
+    noDetail: false,
+    noSearch: false,
+    fields: [
+        {
+            name: 'thumbnail',
+            label: 'Image',
+            type: 'template',
+            columnTemplate: '<image src="{{thumbnail.path + "/standard_medium." + thumbnail.extension}}" style="max-height:90px"></image>'
+        },
+        {
+            name: 'name',
+            label: 'Name',
+            type: 'text'
+        },
+        {
+            name: 'description',
+            label: 'Description',
+            type: 'text'
+        },
+    ],
+    serverSide: {
+        searchParam: 'nameStartsWith',
+        offsetParam: 'offset',
+        limitParam: 'limit',
+    },
+    http: {
+        rootApi: 'https://gateway.marvel.com:443/v1/public',
+        params: {
+            apikey: 'c3c80a056a45ea887f1c77c2525e66a5'
+        },
+        functionData: function (response, resolve, reject, method) {
+            if(method == 'getById') {
+                resolve({ 
+                    data: response.data.data.results[0]
+                });
+            }
+            else {
+                resolve({ 
+                    data: response.data.data.results,
+                    total: response.data.data.total
+                });
+            }
+        }
+    }
+};
+```
+
+### Options
+| Params | Type | Details |
+| ------ | ---- | ------- |
+| entity | string | Nombre de la entidad o tabla a consultar en el RESTfull Api. |
+| id | string | Id de la entidad o tabla. |
+| noEdit | Boolean | Desabilita la edición. Valor por defecto: false. |
+| noDelete | Boolean | Desabilita la eliminación. Valor por defecto: false. |
+| noCreate | Boolean | Desabilita la creación. Valor por defecto: false. |
+| noDetail | Boolean | Desabilita la visualización de detalles. Valor por defecto: false. |
+| noSearch | Boolean | Desabilita la busqueda. Valor por defecto: false. |
+| fields | Array | Arreglo de campos a usar en el CRUD. |
+| serverSide | Boolean, Object | Habilita el paginado y busqueda del lado del servidor. Valor por defecto: false. |
+| http | Object | Configuración de las consultas al RESTfull Api. |
+| formType | String | Tipo de formulario. Posibles valores: ['inline', 'wondow']. Valor por defecto: 'inline'. |
+| deleteConfirm | Boolean | Indica si se solicitará conformación al intentar eliminar un registro. Valor por defecto: true. |
+| searchText | String | Texto a buscar por defecto. |
+| searchDelay | Integer | Tiempo en miliseguntos de retraso en escribir en el campo de busqueda. |
+| tableLimit | Integer | Cantidad de filas por paginas a mostrar en la tabla. |
+| limitOptions | Array(Integer) | Opciones para elegir la cantidad de filas a mostrar por pagina. Valor por defecto: [10, 20, 30]. |
+
+### Options -> Fields
 | Params | Type | Details |
 | ------ | ---- | ------- |
 | name | String | Nombre del campo. |

@@ -451,7 +451,8 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
             limitOptions: [10, 20, 30],
             translate: function(text) {
                 return text;
-            }
+            },
+            autoRefresh: true,
         };     
 
         var defaultText = {
