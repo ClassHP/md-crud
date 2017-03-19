@@ -71,8 +71,7 @@
 
             if (idValue) {                
                 $scope.isLoading = true;
-                var optionsHttp = {};
-                angular.extend(optionsHttp, options.http);
+                var optionsHttp = angular.copy(options.http);
                 optionsHttp.entity = options.entity;
                 optionsHttp.id = idValue;
                 crudService.getById(optionsHttp).then(function (response) {
@@ -89,8 +88,7 @@
 
             $scope.save = function () {
                 var promise;
-                var optionsHttp = {};
-                angular.extend(optionsHttp, options.http);
+                var optionsHttp = angular.copy(options.http);
                 optionsHttp.entity = options.entity;
                 optionsHttp.data = $scope.item;
                 if (idValue) {                    

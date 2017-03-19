@@ -5,9 +5,9 @@
         .module('mdCrudModule')
         .directive('mdCrud', crudDirective);
 
-    crudDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$mdDialog', '$interpolate'];
+    crudDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$mdDialog', '$interpolate', '$sce'];
 
-    function crudDirective(crudService, tools, $mdDialog, $interpolate) {
+    function crudDirective(crudService, tools, $mdDialog, $interpolate, $sce) {
         var directive = {
             link: link,
             restrict: 'EA',
@@ -32,6 +32,8 @@
             var deleteConfirm = tools.evalDefined([attrs.deleteConfirm, options.deleteConfirm, crudService.options.deleteConfirm]);
             var autoRefresh = tools.evalDefined([attrs.autoRefresh, options.autoRefresh, crudService.options.autoRefresh]);
             var getParams = tools.evalDefined([attrs.getParams, options.getParams, {}]);
+            $scope.searchText = attrs.searchText || options.searchText || "";
+            $scope.searchDelay = attrs.searchDelay || options.searchDelay || (options.serverSide ? 500 : 0);
 
             $scope.fields = options.fields;
             $scope.rowSelected = null;
@@ -40,7 +42,7 @@
             $scope.ef = tools.evalFunction;
 
             $scope.stringToHtml = function(str, data) {
-                return $interpolate(str)(data);
+                return $sce.trustAsHtml($interpolate(str)(data));
             }
 
             $scope.isLoading = true;
@@ -56,21 +58,32 @@
                 return row[field.name];
             }
 
+            $scope.onSearchTextChange = function(text) {
+                $scope.searchText = text;
+                if(options.serverSide && options.serverSide.searchParam) {
+                    $scope.table.page = 1;
+                    options.refresh();
+                }
+            }
+
             $scope.table = {
                 rows: [],
                 refresh: function (params) {
                     $scope.isLoading = true;
-                    if (params)
-                        getParams = params;
-                    var optionsGet = {};
-                    angular.extend(optionsGet, options.http);
+                    angular.extend(getParams, params);
+                    var optionsGet = angular.copy(options.http);
                     optionsGet.entity = options.entity;
-                    optionsGet.params = getParams;
+                    optionsGet.params = angular.copy(optionsGet.params || {});
+                    angular.extend(optionsGet.params, getParams);
                     if(options.serverSide) {
-                        optionsGet.params[options.serverSide.pageParam | 'page'] = $scope.table.page;
-                        optionsGet.params[options.serverSide.limitParam | 'limit'] = $scope.table.limit;
-                        optionsGet.params[options.serverSide.offsetParam | 'offset'] = $scope.table.page * $scope.table.limit;
-                        optionsGet.params[options.serverSide.searchParam | 'search'] = $scope.searchText;
+                        if(options.serverSide.pageParam)
+                            optionsGet.params[options.serverSide.pageParam || 'page'] = $scope.table.page;
+                        if(options.serverSide.offsetParam)
+                            optionsGet.params[options.serverSide.offsetParam || 'offset'] = ($scope.table.page - 1) * $scope.table.limit;
+                        if(options.serverSide.limitParam)
+                            optionsGet.params[options.serverSide.limitParam || 'limit'] = $scope.table.limit;
+                        if(options.serverSide.searchParam)
+                            optionsGet.params[options.serverSide.searchParam || 'search'] = ($scope.searchText != "") ? $scope.searchText : undefined;
                     }
                     $scope.table.promise = crudService.get(optionsGet).then(function (response) {
                         $scope.isLoading = false;
@@ -125,12 +138,11 @@
                     var index = this.rows.findIndex(function (r) {
                         return r[options.id] == rowId;
                     });
-                    var optionsDelete = {};
-                    angular.extend(optionsDelete, options.http);
-                    optionsDelete.entity = options.entity;
-                    optionsDelete.id = rowId;
+                    var optionsHttp = angular.copy(options.http);
+                    optionsHttp.entity = options.entity;
+                    optionsHttp.id = rowId;
                     var deleteFunct = function () {
-                        crudService.delete(optionsDelete).then(function (data) {
+                        crudService.delete(optionsHttp).then(function (data) {
                             t.rows.splice(index, 1);
                         }, function (error) {
                             if (!error)
@@ -161,6 +173,10 @@
                         rowsPerPage: translate(text.tablePaginationRowsPerPage),
                         of: translate(text.tablePaginationOf)
                     } 
+                },
+                onPaginate: function() {
+                    if(options.serverSide)
+                        $scope.table.refresh();
                 }
             }
 

@@ -3,7 +3,7 @@
 Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utilizando $http.
 
 ## Demo
-[Aplicación Demo](https://cdn.rawgit.com/ClassHP/md-crud/0.1.1/demo/index.html)
+[Aplicación Demo](https://cdn.rawgit.com/ClassHP/md-crud/0.1.4/demo/index.html)
 
 ## Dependecias
 ```javascript
@@ -20,7 +20,7 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
 }
 ```
 ## CDN
-[https://cdn.rawgit.com/ClassHP/md-crud/0.1.1/dist/md-crud.min.js](https://cdn.rawgit.com/ClassHP/md-crud/0.1.1/dist/md-crud.min.js)
+[https://cdn.rawgit.com/ClassHP/md-crud/0.1.4/dist/md-crud.min.js](https://cdn.rawgit.com/ClassHP/md-crud/0.1.4/dist/md-crud.min.js)
 
 ## npm
 ```sh

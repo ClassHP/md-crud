@@ -118,6 +118,12 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
         noSearch: false,
         fields: [
             {
+                name: 'thumbnail',
+                label: 'Image',
+                type: 'template',
+                columnTemplate: '<image src="{{thumbnail.path + "/standard_medium." + thumbnail.extension}}" style="max-height:90px"></image>'
+            },
+            {
                 name: 'name',
                 label: 'Name',
                 type: 'text'
@@ -127,26 +133,29 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
                 label: 'Description',
                 type: 'text'
             },
-            {
-                name: 'thumbnail',
-                label: 'Image',
-                type: 'template',
-                columnTemplate: '<image ng-switch-when="image" ng-src="{{thumbnail.path}}" style="max-height:90px"></image>'
-            }
         ],
         serverSide: {
-            searchParam: 'nameStartsWith'
-        },
-        getParams: {
-            apikey: 'c3c80a056a45ea887f1c77c2525e66a5'
+            searchParam: 'nameStartsWith',
+            offsetParam: 'offset',
+            limitParam: 'limit',
         },
         http: {
             rootApi: 'https://gateway.marvel.com:443/v1/public',
-            functionData: function (response, resolve, reject) {
-                resolve({ 
-                    data: response.data.data.results,
-                    total: response.data.data.total
-                });
+            params: {
+                apikey: 'c3c80a056a45ea887f1c77c2525e66a5'
+            },
+            functionData: function (response, resolve, reject, method) {
+                if(method == 'getById') {
+                    resolve({ 
+                        data: response.data.data.results[0]
+                    });
+                }
+                else {
+                    resolve({ 
+                        data: response.data.data.results,
+                        total: response.data.data.total
+                    });
+                }
             }
         }
     };  
