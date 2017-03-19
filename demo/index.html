@@ -26,9 +26,22 @@
         <md-button ng-click="btnEnglish()">English</md-button>
       </div>
     </md-toolbar>
-
     <md-content laout="column" flex>
-        <md-crud options="crudOptions"></md-crud>
+      <md-tabs md-dynamic-height md-border-bottom>
+        <md-tab label="Simple">
+          <div layout="row" layout-padding layout-margin>
+            <md-switch ng-model="crudOptions.noEdit">noEdit</md-switch>
+            <md-switch ng-model="crudOptions.noDelete">noDelete</md-switch>
+            <md-switch ng-model="crudOptions.noCreate">noCreate</md-switch>
+            <md-switch ng-model="crudOptions.noDetail">noDetail</md-switch>
+            <md-switch ng-model="crudOptions.noSearch">noSearch</md-switch>
+          </div>
+          <md-crud options="crudOptions"></md-crud>
+        </md-tab>
+        <md-tab label="Server side">
+          <md-crud options="crudOptions2"></md-crud>
+        </md-tab>
+      </md-tabs>
     </md-content>
 
     <!-- Angular Material Dependencies -->

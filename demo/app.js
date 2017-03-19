@@ -6,12 +6,6 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
     .accentPalette('blue-grey', { 'default': '500' })
     .warnPalette('orange');
 }])
-.run(['mdCrudService', function (mdCrudService) {    
-    mdCrudService.setDefaultOptions({
-        rootApi: 'https://fakerestapi.azurewebsites.net/api',
-        methodPatch: 'PUT'
-    });
-}])
 .controller('mainController', ['$scope', '$timeout', 'mdCrudService', function($scope, $timeout, mdCrudService){
 
     $scope.btnSpanish = function() {
@@ -52,6 +46,8 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
         noEdit: false,
         noDelete: false,
         noCreate: false,
+        noDetail: false,
+        noSearch: false,
         fields: [
             {
                 name: 'Title',
@@ -105,10 +101,97 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
             onEdit: function (data) {
                 data.PublishDate = new Date(data.PublishDate);
             }
+        },
+        http: {
+            rootApi: 'https://fakerestapi.azurewebsites.net/api',
+            methodPatch: 'PUT'
         }
     };    
     
+    $scope.crudOptions2 = {
+        entity: 'characters',
+        id: 'id',
+        noEdit: true,
+        noDelete: true,
+        noCreate: true,
+        noDetail: false,
+        noSearch: false,
+        fields: [
+            {
+                name: 'first_name',
+                label: 'Firs name',
+                type: 'text',
+                required: true
+            },
+            {
+                name: 'last_name',
+                label: 'Last name',
+                type: 'text',
+                required: true
+            },
+            {
+                name: 'avatar',
+                label: 'Avatar',
+                type: 'image',
+                readonly: true
+            }
+        ],
+        serverSide: {
+            searchParam: 'nameStartsWith'
+        },
+        getParams: {
+            apikey: 'c3c80a056a45ea887f1c77c2525e66a5'
+        },
+        http: {
+            rootApi: 'https://gateway.marvel.com:443/v1/public',
+            functionData: function (response, resolve, reject) {
+                resolve({ 
+                    data: response.data.data.results,
+                    total: response.data.data.total
+                });
+            }
+        }
+    };  
+
+    $scope.crudOptions3 = {
+        entity: 'people',
+        id: 'id',
+        serverSide: true,
+        noEdit: true,
+        noDelete: true,
+        noCreate: true,
+        noDetail: true,
+        noSearch: false,
+        fields: [
+            {
+                name: 'first_name',
+                label: 'Firs name',
+                type: 'text',
+                required: true
+            },
+            {
+                name: 'last_name',
+                label: 'Last name',
+                type: 'text',
+                required: true
+            },
+            {
+                name: 'avatar',
+                label: 'Avatar',
+                type: 'image',
+                readonly: true
+            }
+        ],
+        http: {
+            rootApi: 'https://swapi.co/api',
+            functionData: function (response, resolve, reject) {
+                resolve(response.data.results || response.data);
+            }
+        }
+    };  
+    
     $timeout(function () {
         $scope.crudOptions.refresh();
+        $scope.crudOptions2.refresh();
     });
 }]);

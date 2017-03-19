@@ -71,12 +71,12 @@
 
             if (idValue) {                
                 $scope.isLoading = true;
-                crudService.getById({
-                    entity: options.entity, 
-                    id: idValue, 
-                    rootApi: options.rootApi
-                }).then(function (data) {
-                    $scope.item = data;                    
+                var optionsHttp = {};
+                angular.extend(optionsHttp, options.http);
+                optionsHttp.entity = options.entity;
+                optionsHttp.id = idValue;
+                crudService.getById(optionsHttp).then(function (response) {
+                    $scope.item = response.data;                    
                     if ($scope.onEdit)
                         $scope.onEdit($scope.item);
                     $scope.isLoading = false;
@@ -89,26 +89,22 @@
 
             $scope.save = function () {
                 var promise;
-                if (idValue) {
-                    promise = crudService.patch({
-                        entity: options.entity, 
-                        id: $scope.item[options.id], 
-                        data: $scope.item, 
-                        rootApi: options.rootApi
-                    });
+                var optionsHttp = {};
+                angular.extend(optionsHttp, options.http);
+                optionsHttp.entity = options.entity;
+                optionsHttp.data = $scope.item;
+                if (idValue) {                    
+                    optionsHttp.id = $scope.item[options.id];
+                    promise = crudService.patch(optionsHttp);
                 }
                 else {
-                    promise = crudService.post({
-                        entity: options.entity, 
-                        data: $scope.item, 
-                        rootApi: options.rootApi
-                    });
+                    promise = crudService.post(optionsHttp);
                 }
                 $scope.isLoading = true;
-                promise.then(function (data) {
-                    angular.copy(data, $scope.ngModel);
+                promise.then(function (response) {
+                    angular.copy(response.data, $scope.ngModel);
                     if ($scope.onSussces)
-                        $scope.onSussces(data, $scope.formType);
+                        $scope.onSussces(response.data, $scope.formType);
                     $scope.isLoading = false;
                 }, function (data) {
                     if (data.details) {

@@ -1,5 +1,5 @@
-angular.module('mdCrudTemplates', []).run(['$templateCache', function($templateCache) {$templateCache.put('/views/crud.html','<div layout-margin layout-padding><div><div class="md-default" layout="row" layout-align="start center"><md-button class="md-raised md-primary" ng-click="table.create($event)" ng-if="!options.noCreate" ng-disabled="isLoading">{{translate(text.createOption)}}</md-button><div ng-if="options.templateTools" ng-include="options.templateTools" flex layout="row"></div><div flex></div><div layout="row"><md-button class="md-icon-button md-primary" ng-disabled="true"><md-icon>&#xE8B6;</md-icon></md-button><md-autocomplete md-search-text="searchText" type="search" placeholder="" md-items="item in []"></md-autocomplete></div></div><div ng-if="formType == \'inline\' && rowCreate"><md-card flex layout-fill style="background-color: white"><md-crud-form options="options" ng-model="rowCreate" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" on-sussces="onSussces" template-url="templateUrl" editable="true"></md-crud-form></md-card><br></div><md-table-container md-whiteframe="1"><table data-md-table md-progress="table.promise"><thead md-head data-md-order="table.order" md-on-reorder="table.refresh" style="background-color: white"><tr md-row><th md-column ng-repeat="field in fields" ng-if="field.columnHiden != true">{{translate(field.label)}}</th><th md-column style="min-width:132px;width:132px" ng-if="!options.noDelete && !options.noEdit"></th><th md-column style="min-width:60px;width:60px" ng-if="(options.noEdit && !options.noDelete) || (!options.noEdit && options.noDelete)"></th></tr></thead><tbody md-body><tr md-row md-select="row" ng-repeat-start="row in table.rows | filter:searchText | limitTo: table.limit: (table.page - 1) * table.limit" ng-mouseover="row.mouserover=true" ng-mouseleave="row.mouserover=false" ng-class="{ \'md-selected\': row.mouserover || rowSelected == row }" ng-click="table.detail(row, $event)"><td md-cell ng-repeat="field in fields" ng-if="field.columnHiden != true"><div ng-switch="ef(field.type, row)" ng-if="!field.columnTemplate"><span ng-switch-when="boolean"><md-switch ng-model="row[field.name]" ng-disabled="true" aria-label="{{translate(field.label)}}"></md-switch></span><image ng-switch-when="image" ng-src="{{row[field.name]}}" style="max-height:90px"></image><span ng-switch-when="date">{{ row[field.name] | date:\'shortDate\' }}</span> <span ng-switch-when="time">{{ row[field.name] | date:\'shortTime\' }}</span> <span ng-switch-when="datetime">{{ row[field.name] | date:\'short\' }}</span> <span ng-switch-when="select">{{ getTextSelect(field, row) }}</span> <span ng-switch-default>{{translate(row[field.name])}}</span></div><span ng-if="field.columnTemplate" ng-bind-html="stringToHtml(field.columnTemplate, row)"></span></td><td md-cell><md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.edit(row, $event)" ng-if="!options.noEdit"><md-icon>&#xE3C9;</md-icon></md-button><md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.delete(row[options.id], $event)" ng-if="!options.noDelete"><md-icon>&#xE92B;</md-icon></md-button></td></tr><tr ng-repeat-end ng-if="rowSelected == row"><td colspan="{{fields.length + 1}}"><md-card layout-fill style="background-color: white"><md-crud-form ng-if="formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" on-sussces="onSussces" template-url="templateUrl" editable="formEditable"></md-crud-form><md-crud-form ng-if="!formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" on-sussces="onSussces" template-url="templateUrl" editable="formEditable"></md-crud-form></md-card></td></tr></tbody></table><md-table-pagination md-limit="table.limit" md-limit-options="table.limitOptions" md-page="table.page" md-total="{{(table.rows | filter:searchText).length}}" md-page-select md-label="{{table.labels()}}" style="background-color: white"></md-table-pagination></md-table-container></div></div>');
-$templateCache.put('/views/crudForm.html','<div layout-padding><form name="formCrud" ng-submit="formCrud.$valid && save()" layout="row" layout-wrap novalidate><div ng-repeat="field in fields" flex="{{field.flex || \'grow\'}}" ng-if="(formType==\'create\' && !field.createHiden) || (formType==\'edit\' && !field.editHiden) || (formType==\'detail\' && !field.detailHiden)"><div ng-switch="ef(field.type, item)" ng-if="!field.templateUrl"><md-input-container class="md-block" flex ng-switch-default><label>{{translate(field.label)}}</label><input ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" ng-disabled="field.readonly || readonly || isLoading" ng-minlength="field.minlength" ng-maxlength="field.maxlength" ng-pattern="field.pattern"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" flex ng-switch-when="textarea"><label>{{translate(field.label)}}</label><textarea ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" ng-disabled="field.readonly || readonly || isLoading" ng-minlength="field.minlength" ng-maxlength="field.maxlength" rows="{{ field.rows || 3 }}" md-select-on-focus></textarea><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" flex ng-switch-when="email"><label>{{translate(field.label)}}</label><input ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" type="email" ng-disabled="field.readonly || readonly || isLoading" ng-minlength="field.minlength" ng-maxlength="field.maxlength" ng-pattern="field.pattern"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" flexemail flex ng-switch-when="integer"><label>{{translate(field.label)}}</label><input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" ng-disabled="field.readonly || readonly || isLoading" ng-min="field.min" ng-max="field.max" step="{{field.step || 1}}"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" flex ng-switch-when="decimal"><label>{{translate(field.label)}}</label><input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" ng-disabled="field.readonly || readonly || isLoading" ng-min="field.min" ng-max="field.max" step="{{field.step || \'any\'}}"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><div class="md-block" flex ng-switch-when="image"><lf-ng-md-file-input name="{{field.name | translate}}" lf-files="files[field.name]" lf-mimetype="image/*" lf-placeholder="{{field.label}}" lf-browse-label="Abrir" lf-remove-label="Eliminar"></lf-ng-md-file-input><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div><br></div><div class="md-block" flex ng-switch-when="map"><ng-map zoom="{{field.zoom || 11}}" center="{{item[field.lat]}},{{item[field.lng]}}"><marker position="{{item[field.lat]}},{{item[field.lng]}}" title="drag me" draggable="true" on-dragend="onMarkerDrag()" data="{{field}}"></marker></ng-map></div><md-input-container class="md-block" flex ng-switch-when="boolean"><md-switch ng-model="item[field.name]" ng-disabled="field.readonly || readonly || isLoading" aria-label="field.label">{{translate(field.label)}}</md-switch></md-input-container><md-input-container class="md-block" flex ng-switch-when="select"><label>{{translate(field.label)}}</label><md-select ng-model="item[field.name]" ng-if="field.multiple" multiple="multiple" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required"><md-option ng-value="mdSelectItem[field.value || \'value\']" ng-repeat="mdSelectItem in ef(field.data, item)">{{mdSelectItem[field.text || \'text\']}}</md-option></md-select><md-select ng-model="item[field.name]" ng-if="!field.multiple" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required"><md-option ng-if="!field.required"></md-option><md-option ng-value="mdSelectItem[field.value || \'value\']" ng-repeat="mdSelectItem in ef(field.data, item)">{{mdSelectItem[field.text || \'text\']}}</md-option></md-select><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" flex ng-switch-when="date"><label>{{translate(field.label)}}</label><md-datepicker ng-model="item[field.name]" name="{{field.name}}" md-min-date="field.minDate" md-max-date="field.maxDate" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required"></md-datepicker><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" ng-switch-when="time" flex><label style="margin-left: 50px">{{translate(field.label)}}</label><div class="" layout="row" layout-align="start start"><md-button layout-nowrap ng-click="showTimePicker($event, item, field.name)" class="md-datepicker-button md-icon-button md-button md-ink-ripple" ng-disabled="field.readonly || readonly || isLoading"><md-icon>access_time</md-icon></md-button><div flex><input class="md-datepicker-input md-input" type="time" name="{{field.name}}" ng-model="item[field.name]" ng-required="field.required" flex ng-min="field.min" ng-max="field.max" ng-disabled="field.readonly || readonly || isLoading"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></div></div></md-input-container><div class="md-block" ng-switch-when="datetime" flex layout="row" layout-align="start start"><md-input-container flex="none"><label>{{translate(field.label)}}</label><md-datepicker layout-nowrap ng-model="item[field.name]" name="{{field.name}}" md-min-date="field.minDate" md-max-date="field.maxDate" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required"></md-datepicker><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container><div class="" layout="row" layout-align="start start"><md-button layout-nowrap ng-click="showTimePicker($event, item, field.name)" class="md-datepicker-button md-icon-button md-button md-ink-ripple" ng-disabled="field.readonly || readonly || isLoading"><md-icon>access_time</md-icon></md-button><div flex><input class="md-datepicker-input md-input" type="time" name="{{field.name}}" ng-model="item[field.name]" ng-required="field.required" flex ng-min="field.min" ng-max="field.max" ng-disabled="field.readonly || readonly || isLoading"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></div></div></md-input-container></div></div><div ng-if="field.templateUrl" ng-include="field.templateUrl"></div></div><div ng-repeat="message in errors" md-colors="{color:\'warn\'}" flex="grow">{{translate(message)}}</div><div layout="row" layout-align="center center" flex="grow"><md-button class="md-raised" ng-click="cancel()" ng-disabled="isLoading">{{translate(option.formCancelText || text.formCancel)}}</md-button><div flex="5"></div><md-button class="md-raised md-primary" type="submit" ng-disabled="readonly || isLoading">{{translate(option.formSubmit || text.formSubmit)}}</md-button></div></form></div>');
+angular.module('mdCrudTemplates', []).run(['$templateCache', function($templateCache) {$templateCache.put('/views/crud.html','<div layout-margin layout-padding><div><div class="md-default" layout="row" layout-align="start center"><md-button class="md-raised md-primary" ng-click="table.create($event)" ng-if="!options.noCreate" ng-disabled="isLoading">{{translate(text.createOption)}}</md-button><div ng-if="options.templateTools" ng-include="options.templateTools" flex layout="row"></div><div flex></div><div layout="row" ng-if="!options.noSearch" style="margin-bottom:5px"><md-button class="md-icon-button md-primary" ng-disabled="true"><md-icon>&#xE8B6;</md-icon></md-button><md-autocomplete md-search-text="searchText" type="search" placeholder="" md-items="item in []"></md-autocomplete></div></div><div ng-if="formType == \'inline\' && rowCreate"><md-card flex layout-fill style="background-color: white"><md-crud-form options="options" ng-model="rowCreate" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" on-sussces="onSussces" template-url="templateUrl" editable="true"></md-crud-form></md-card><br></div><md-table-container md-whiteframe="1"><table data-md-table md-progress="table.promise"><thead md-head data-md-order="table.order" md-on-reorder="table.refresh" style="background-color: white"><tr md-row><th md-column ng-repeat="field in fields" ng-if="field.columnHiden != true">{{translate(field.label)}}</th><th md-column style="min-width:132px;width:132px" ng-if="!options.noDelete && !options.noEdit"></th><th md-column style="min-width:60px;width:60px" ng-if="(options.noEdit && !options.noDelete) || (!options.noEdit && options.noDelete)"></th></tr></thead><tbody md-body><tr md-row md-select="row" ng-repeat-start="row in (options.serverSide ? table.rows : (table.rows | filter:searchText | limitTo: table.limit: (table.page - 1) * table.limit))" ng-mouseover="row.mouserover=true" ng-mouseleave="row.mouserover=false" ng-class="{ \'md-selected\': row.mouserover || rowSelected == row }" ng-click="table.detail(row, $event)" style="cursor:pointer"><td md-cell ng-repeat="field in fields" ng-if="field.columnHiden != true"><div ng-switch="ef(field.type, row)" ng-if="!field.columnTemplate"><span ng-switch-when="boolean"><md-switch ng-model="row[field.name]" ng-disabled="true" aria-label="{{translate(field.label)}}"></md-switch></span><image ng-switch-when="image" ng-src="{{row[field.name]}}" style="max-height:90px"></image><span ng-switch-when="date">{{ row[field.name] | date:\'shortDate\' }}</span> <span ng-switch-when="time">{{ row[field.name] | date:\'shortTime\' }}</span> <span ng-switch-when="datetime">{{ row[field.name] | date:\'short\' }}</span> <span ng-switch-when="select">{{ getTextSelect(field, row) }}</span> <span ng-switch-default>{{translate(row[field.name])}}</span></div><span ng-if="field.columnTemplate" ng-bind-html="stringToHtml(field.columnTemplate, row)"></span></td><td md-cell ng-if="!options.noDelete || !options.noEdit"><md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.edit(row, $event)" ng-if="!options.noEdit"><md-icon>&#xE3C9;</md-icon></md-button><md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.delete(row[options.id], $event)" ng-if="!options.noDelete"><md-icon>&#xE92B;</md-icon></md-button></td></tr><tr ng-repeat-end ng-if="rowSelected == row"><td colspan="{{fields.length + 1}}"><md-card layout-fill style="background-color: white"><md-crud-form ng-if="formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" on-sussces="onSussces" template-url="templateUrl" editable="formEditable"></md-crud-form><md-crud-form ng-if="!formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" on-sussces="onSussces" template-url="templateUrl" editable="formEditable"></md-crud-form></md-card></td></tr></tbody></table><md-table-pagination md-limit="table.limit" md-limit-options="table.limitOptions" md-page="table.page" md-total="{{options.serverSide ? table.total : (table.rows | filter:searchText).length}}" md-page-select md-label="{{table.labels()}}" style="background-color: white"></md-table-pagination></md-table-container></div></div>');
+$templateCache.put('/views/crudForm.html','<div layout-padding><form name="formCrud" ng-submit="formCrud.$valid && save()" layout="row" layout-wrap novalidate><div ng-repeat="field in fields" flex="{{field.flex || \'grow\'}}" ng-if="(formType==\'create\' && !field.createHiden) || (formType==\'edit\' && !field.editHiden) || (formType==\'detail\' && !field.detailHiden)"><div ng-switch="ef(field.type, item)" ng-if="!field.templateUrl"><md-input-container class="md-block" flex ng-switch-default><label>{{translate(field.label)}}</label><input ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" ng-disabled="field.readonly || readonly || isLoading" ng-minlength="field.minlength" ng-maxlength="field.maxlength" ng-pattern="field.pattern"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" flex ng-switch-when="textarea"><label>{{translate(field.label)}}</label><textarea ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" ng-disabled="field.readonly || readonly || isLoading" ng-minlength="field.minlength" ng-maxlength="field.maxlength" rows="{{ field.rows || 3 }}" md-select-on-focus></textarea><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" flex ng-switch-when="email"><label>{{translate(field.label)}}</label><input ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" type="email" ng-disabled="field.readonly || readonly || isLoading" ng-minlength="field.minlength" ng-maxlength="field.maxlength" ng-pattern="field.pattern"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" flexemail flex ng-switch-when="integer"><label>{{translate(field.label)}}</label><input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" ng-disabled="field.readonly || readonly || isLoading" ng-min="field.min" ng-max="field.max" step="{{field.step || 1}}"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" flex ng-switch-when="decimal"><label>{{translate(field.label)}}</label><input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" ng-disabled="field.readonly || readonly || isLoading" ng-min="field.min" ng-max="field.max" step="{{field.step || \'any\'}}"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><div class="md-block" flex ng-switch-when="image"><lf-ng-md-file-input name="{{field.name}}" lf-files="files[field.name]" lf-mimetype="image/*" lf-placeholder="{{field.label}}" lf-browse-label="Abrir" lf-remove-label="Eliminar"></lf-ng-md-file-input><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div><br></div><div class="md-block" flex ng-switch-when="map"><ng-map zoom="{{field.zoom || 11}}" center="{{item[field.lat]}},{{item[field.lng]}}"><marker position="{{item[field.lat]}},{{item[field.lng]}}" title="drag me" draggable="true" on-dragend="onMarkerDrag()" data="{{field}}"></marker></ng-map></div><md-input-container class="md-block" flex ng-switch-when="boolean"><md-switch ng-model="item[field.name]" ng-disabled="field.readonly || readonly || isLoading" aria-label="field.label">{{translate(field.label)}}</md-switch></md-input-container><md-input-container class="md-block" flex ng-switch-when="select"><label>{{translate(field.label)}}</label><md-select ng-model="item[field.name]" ng-if="field.multiple" multiple="multiple" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required"><md-option ng-value="mdSelectItem[field.value || \'value\']" ng-repeat="mdSelectItem in ef(field.data, item)">{{mdSelectItem[field.text || \'text\']}}</md-option></md-select><md-select ng-model="item[field.name]" ng-if="!field.multiple" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required"><md-option ng-if="!field.required"></md-option><md-option ng-value="mdSelectItem[field.value || \'value\']" ng-repeat="mdSelectItem in ef(field.data, item)">{{mdSelectItem[field.text || \'text\']}}</md-option></md-select><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" flex ng-switch-when="date"><label>{{translate(field.label)}}</label><md-datepicker ng-model="item[field.name]" name="{{field.name}}" md-min-date="field.minDate" md-max-date="field.maxDate" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required"></md-datepicker><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container class="md-block" ng-switch-when="time" flex><label style="margin-left: 50px">{{translate(field.label)}}</label><div class="" layout="row" layout-align="start start"><md-button layout-nowrap ng-click="showTimePicker($event, item, field.name)" class="md-datepicker-button md-icon-button md-button md-ink-ripple" ng-disabled="field.readonly || readonly || isLoading"><md-icon>access_time</md-icon></md-button><div flex><input class="md-datepicker-input md-input" type="time" name="{{field.name}}" ng-model="item[field.name]" ng-required="field.required" flex ng-min="field.min" ng-max="field.max" ng-disabled="field.readonly || readonly || isLoading"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></div></div></md-input-container><div class="md-block" ng-switch-when="datetime" flex layout="row" layout-align="start start"><md-input-container flex="none"><label>{{translate(field.label)}}</label><md-datepicker layout-nowrap ng-model="item[field.name]" name="{{field.name}}" md-min-date="field.minDate" md-max-date="field.maxDate" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required"></md-datepicker><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></md-input-container><md-input-container><div class="" layout="row" layout-align="start start"><md-button layout-nowrap ng-click="showTimePicker($event, item, field.name)" class="md-datepicker-button md-icon-button md-button md-ink-ripple" ng-disabled="field.readonly || readonly || isLoading"><md-icon>access_time</md-icon></md-button><div flex><input class="md-datepicker-input md-input" type="time" name="{{field.name}}" ng-model="item[field.name]" ng-required="field.required" flex ng-min="field.min" ng-max="field.max" ng-disabled="field.readonly || readonly || isLoading"><div ng-messages="formCrud[field.name].$error"><div ng-messages-include="/views/crudFormMessages.html"></div></div></div></div></md-input-container></div></div><div ng-if="field.templateUrl" ng-include="field.templateUrl"></div></div><div ng-repeat="message in errors" md-colors="{color:\'warn\'}" flex="grow">{{translate(message)}}</div><div layout="row" layout-align="center center" flex="grow"><md-button class="md-raised" ng-click="cancel()" ng-disabled="isLoading">{{translate(option.formCancelText || text.formCancel)}}</md-button><div flex="5"></div><md-button class="md-raised md-primary" type="submit" ng-disabled="readonly || isLoading">{{translate(option.formSubmit || text.formSubmit)}}</md-button></div></form></div>');
 $templateCache.put('/views/crudFormDialog.html','<md-dialog aria-label="Editar" flex="50"><md-toolbar><div class="md-toolbar-tools"><h2>{{formTitle | translate}}</h2><span flex></span><md-button class="md-icon-button" ng-click="cancelDialog()"><md-icon aria-label="Cerrar">close</md-icon></md-button></div></md-toolbar><md-dialog-content><md-crud-form options="options" ng-model="item" on-open="onOpen" on-edit="onEdit" on-cancel="onCancelDialog" on-sussces="onSusscesDialog" template-url="templateUrl" editable="formEditable"></md-crud-form></md-dialog-content></md-dialog>');
 $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{translate(field.messageRequired || text.messageRequired)}}</div><div ng-message="minlength">{{translate(field.messageMinlength || text.messageMinlength)}} ({{field.minlength}}).</div><div ng-message="maxlength">{{translate(field.messageMaxlength || text.messageMaxlength)}} ({{field.maxlength}}).</div><div ng-message="pattern">{{translate(field.messagePattern || text.messagePattern)}}</div><div ng-message="min">{{translate(field.messageMin || text.messageMin)}} ({{field.min}}).</div><div ng-message="max">{{translate(field.messageMax || text.messageMax)}} ({{field.max}}).</div><div ng-message="mimetype">{{translate(field.messageMimetype || text.messageMimetype)}}</div><div ng-message="valid">{{translate(field.messageValid || text.messageValid)}}</div><div ng-message="mindate">{{translate(field.messageMindate || text.messageMindate)}} {{field.minDate | date:\'shortDate\'}}.</div><div ng-message="maxdate">{{translate(field.messageMaxdate || text.messageMaxdate)}} {{field.maxDate | date:\'shortDate\'}}.</div>');}]);
 (function () {
@@ -75,13 +75,22 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
                     $scope.isLoading = true;
                     if (params)
                         getParams = params;
-                    $scope.table.promise = crudService.get({ 
-                        entity: options.entity, 
-                        params: getParams, 
-                        rootApi: options.rootApi
-                    }).then(function (data) {
-                        $scope.table.rows = data;
+                    var optionsGet = {};
+                    angular.extend(optionsGet, options.http);
+                    optionsGet.entity = options.entity;
+                    optionsGet.params = getParams;
+                    if(options.serverSide) {
+                        optionsGet.params[options.serverSide.pageParam | 'page'] = $scope.table.page;
+                        optionsGet.params[options.serverSide.limitParam | 'limit'] = $scope.table.limit;
+                        optionsGet.params[options.serverSide.offsetParam | 'offset'] = $scope.table.page * $scope.table.limit;
+                        optionsGet.params[options.serverSide.searchParam | 'search'] = $scope.searchText;
+                    }
+                    $scope.table.promise = crudService.get(optionsGet).then(function (response) {
                         $scope.isLoading = false;
+                        $scope.table.rows = response.data;
+                        if(options.serverSide) {
+                            $scope.table.total = response.total;
+                        }
                     });
                 },
                 create: function (ev) {
@@ -113,7 +122,7 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
                         
                         if ($scope.rowSelected == row)
                             $scope.rowSelected = null; 
-                        else
+                        else if (!options.noDetail)
                             $scope.selectRow(row, false);
                     }
                     if ($scope.formType == "window") {
@@ -129,12 +138,12 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
                     var index = this.rows.findIndex(function (r) {
                         return r[options.id] == rowId;
                     });
+                    var optionsDelete = {};
+                    angular.extend(optionsDelete, options.http);
+                    optionsDelete.entity = options.entity;
+                    optionsDelete.id = rowId;
                     var deleteFunct = function () {
-                        crudService.delete({
-                            entity: options.entity, 
-                            id: rowId, 
-                            rootApi: options.rootApi
-                        }).then(function (data) {
+                        crudService.delete(optionsDelete).then(function (data) {
                             t.rows.splice(index, 1);
                         }, function (error) {
                             if (!error)
@@ -327,12 +336,12 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
 
             if (idValue) {                
                 $scope.isLoading = true;
-                crudService.getById({
-                    entity: options.entity, 
-                    id: idValue, 
-                    rootApi: options.rootApi
-                }).then(function (data) {
-                    $scope.item = data;                    
+                var optionsHttp = {};
+                angular.extend(optionsHttp, options.http);
+                optionsHttp.entity = options.entity;
+                optionsHttp.id = idValue;
+                crudService.getById(optionsHttp).then(function (response) {
+                    $scope.item = response.data;                    
                     if ($scope.onEdit)
                         $scope.onEdit($scope.item);
                     $scope.isLoading = false;
@@ -345,26 +354,22 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
 
             $scope.save = function () {
                 var promise;
-                if (idValue) {
-                    promise = crudService.patch({
-                        entity: options.entity, 
-                        id: $scope.item[options.id], 
-                        data: $scope.item, 
-                        rootApi: options.rootApi
-                    });
+                var optionsHttp = {};
+                angular.extend(optionsHttp, options.http);
+                optionsHttp.entity = options.entity;
+                optionsHttp.data = $scope.item;
+                if (idValue) {                    
+                    optionsHttp.id = $scope.item[options.id];
+                    promise = crudService.patch(optionsHttp);
                 }
                 else {
-                    promise = crudService.post({
-                        entity: options.entity, 
-                        data: $scope.item, 
-                        rootApi: options.rootApi
-                    });
+                    promise = crudService.post(optionsHttp);
                 }
                 $scope.isLoading = true;
-                promise.then(function (data) {
-                    angular.copy(data, $scope.ngModel);
+                promise.then(function (response) {
+                    angular.copy(response.data, $scope.ngModel);
                     if ($scope.onSussces)
-                        $scope.onSussces(data, $scope.formType);
+                        $scope.onSussces(response.data, $scope.formType);
                     $scope.isLoading = false;
                 }, function (data) {
                     if (data.details) {
@@ -408,6 +413,8 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
             urlPatch: '{{rootApi}}/{{entity}}/{{id}}',
             urlDelete: '{{rootApi}}/{{entity}}/{{id}}',
             functionHttp: function(options) {
+                if(options.functionHttp)
+                    return options.functionHttp(options);
                 return $q(function (resolve, reject) {
                     $http({
                         url: $interpolate(options.url)(options),
@@ -415,14 +422,14 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
                         params: options.params,
                         data: options.data
                     }).then(function (response) {
-                        defaultOptions.functionData(response, resolve, reject);
+                        (options.functionData || defaultOptions.functionData)(response, resolve, reject);
                     }, function (response) {
                         reject(response.data);
                     });
                 })
             },
             functionData: function(response, resolve, reject) { 
-                resolve(response.data);
+                resolve(response);
             },
             formType: 'inline',
             deleteConfirm: true,
@@ -474,8 +481,8 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
             },
             get: function (options) {
                 var httpOptions = {
-                    url: defaultOptions.urlGet,
-                    method: defaultOptions.methodGet,
+                    url: options.urlGet || defaultOptions.urlGet,
+                    method: options.methodGet || defaultOptions.methodGet,
                     rootApi: defaultOptions.rootApi
                 };
                 angular.extend(httpOptions, tools.removeNull(options));
@@ -483,8 +490,8 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
             },
             getById: function (options) {
                 var httpOptions = {
-                    url: defaultOptions.urlGetById,
-                    method: defaultOptions.methodGet,
+                    url: options.urlGetById || defaultOptions.urlGetById,
+                    method: options.methodGet || defaultOptions.methodGet,
                     rootApi: defaultOptions.rootApi
                 };
                 angular.extend(httpOptions, tools.removeNull(options));
@@ -492,8 +499,8 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
             },
             post: function (options) {
                 var httpOptions = {
-                    url: defaultOptions.urlPost,
-                    method: defaultOptions.methodPost,
+                    url: options.urlPost || defaultOptions.urlPost,
+                    method: options.methodPost || defaultOptions.methodPost,
                     rootApi: defaultOptions.rootApi
                 };
                 angular.extend(httpOptions, tools.removeNull(options));
@@ -501,8 +508,8 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
             },
             patch: function (options) {
                 var httpOptions = {
-                    url: defaultOptions.urlPatch,
-                    method: defaultOptions.methodPatch,
+                    url: options.urlPatch || defaultOptions.urlPatch,
+                    method: options.methodPatch || defaultOptions.methodPatch,
                     rootApi: defaultOptions.rootApi
                 };
                 angular.extend(httpOptions, tools.removeNull(options));
@@ -510,8 +517,8 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
             },
             delete: function (options) {
                 var httpOptions = {
-                    url: defaultOptions.urlDelete,
-                    method: defaultOptions.methodDelete,
+                    url: options.urlDelete || defaultOptions.urlDelete,
+                    method: options.methodDelete || defaultOptions.methodDelete,
                     rootApi: defaultOptions.rootApi
                 };
                 angular.extend(httpOptions, tools.removeNull(options));

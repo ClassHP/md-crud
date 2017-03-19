@@ -16,6 +16,8 @@
             urlPatch: '{{rootApi}}/{{entity}}/{{id}}',
             urlDelete: '{{rootApi}}/{{entity}}/{{id}}',
             functionHttp: function(options) {
+                if(options.functionHttp)
+                    return options.functionHttp(options);
                 return $q(function (resolve, reject) {
                     $http({
                         url: $interpolate(options.url)(options),
@@ -23,14 +25,14 @@
                         params: options.params,
                         data: options.data
                     }).then(function (response) {
-                        defaultOptions.functionData(response, resolve, reject);
+                        (options.functionData || defaultOptions.functionData)(response, resolve, reject);
                     }, function (response) {
                         reject(response.data);
                     });
                 })
             },
             functionData: function(response, resolve, reject) { 
-                resolve(response.data);
+                resolve(response);
             },
             formType: 'inline',
             deleteConfirm: true,
@@ -82,8 +84,8 @@
             },
             get: function (options) {
                 var httpOptions = {
-                    url: defaultOptions.urlGet,
-                    method: defaultOptions.methodGet,
+                    url: options.urlGet || defaultOptions.urlGet,
+                    method: options.methodGet || defaultOptions.methodGet,
                     rootApi: defaultOptions.rootApi
                 };
                 angular.extend(httpOptions, tools.removeNull(options));
@@ -91,8 +93,8 @@
             },
             getById: function (options) {
                 var httpOptions = {
-                    url: defaultOptions.urlGetById,
-                    method: defaultOptions.methodGet,
+                    url: options.urlGetById || defaultOptions.urlGetById,
+                    method: options.methodGet || defaultOptions.methodGet,
                     rootApi: defaultOptions.rootApi
                 };
                 angular.extend(httpOptions, tools.removeNull(options));
@@ -100,8 +102,8 @@
             },
             post: function (options) {
                 var httpOptions = {
-                    url: defaultOptions.urlPost,
-                    method: defaultOptions.methodPost,
+                    url: options.urlPost || defaultOptions.urlPost,
+                    method: options.methodPost || defaultOptions.methodPost,
                     rootApi: defaultOptions.rootApi
                 };
                 angular.extend(httpOptions, tools.removeNull(options));
@@ -109,8 +111,8 @@
             },
             patch: function (options) {
                 var httpOptions = {
-                    url: defaultOptions.urlPatch,
-                    method: defaultOptions.methodPatch,
+                    url: options.urlPatch || defaultOptions.urlPatch,
+                    method: options.methodPatch || defaultOptions.methodPatch,
                     rootApi: defaultOptions.rootApi
                 };
                 angular.extend(httpOptions, tools.removeNull(options));
@@ -118,8 +120,8 @@
             },
             delete: function (options) {
                 var httpOptions = {
-                    url: defaultOptions.urlDelete,
-                    method: defaultOptions.methodDelete,
+                    url: options.urlDelete || defaultOptions.urlDelete,
+                    method: options.methodDelete || defaultOptions.methodDelete,
                     rootApi: defaultOptions.rootApi
                 };
                 angular.extend(httpOptions, tools.removeNull(options));

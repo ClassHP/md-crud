@@ -62,13 +62,22 @@
                     $scope.isLoading = true;
                     if (params)
                         getParams = params;
-                    $scope.table.promise = crudService.get({ 
-                        entity: options.entity, 
-                        params: getParams, 
-                        rootApi: options.rootApi
-                    }).then(function (data) {
-                        $scope.table.rows = data;
+                    var optionsGet = {};
+                    angular.extend(optionsGet, options.http);
+                    optionsGet.entity = options.entity;
+                    optionsGet.params = getParams;
+                    if(options.serverSide) {
+                        optionsGet.params[options.serverSide.pageParam | 'page'] = $scope.table.page;
+                        optionsGet.params[options.serverSide.limitParam | 'limit'] = $scope.table.limit;
+                        optionsGet.params[options.serverSide.offsetParam | 'offset'] = $scope.table.page * $scope.table.limit;
+                        optionsGet.params[options.serverSide.searchParam | 'search'] = $scope.searchText;
+                    }
+                    $scope.table.promise = crudService.get(optionsGet).then(function (response) {
                         $scope.isLoading = false;
+                        $scope.table.rows = response.data;
+                        if(options.serverSide) {
+                            $scope.table.total = response.total;
+                        }
                     });
                 },
                 create: function (ev) {
@@ -100,7 +109,7 @@
                         
                         if ($scope.rowSelected == row)
                             $scope.rowSelected = null; 
-                        else
+                        else if (!options.noDetail)
                             $scope.selectRow(row, false);
                     }
                     if ($scope.formType == "window") {
@@ -116,12 +125,12 @@
                     var index = this.rows.findIndex(function (r) {
                         return r[options.id] == rowId;
                     });
+                    var optionsDelete = {};
+                    angular.extend(optionsDelete, options.http);
+                    optionsDelete.entity = options.entity;
+                    optionsDelete.id = rowId;
                     var deleteFunct = function () {
-                        crudService.delete({
-                            entity: options.entity, 
-                            id: rowId, 
-                            rootApi: options.rootApi
-                        }).then(function (data) {
+                        crudService.delete(optionsDelete).then(function (data) {
                             t.rows.splice(index, 1);
                         }, function (error) {
                             if (!error)

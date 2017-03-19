@@ -4,7 +4,7 @@
             <md-button class="md-raised md-primary" ng-click="table.create($event)" ng-if="!options.noCreate" ng-disabled="isLoading">{{translate(text.createOption)}}</md-button>
             <div ng-if="options.templateTools" ng-include="options.templateTools" flex layout="row"></div>
             <div flex></div>
-            <div layout="row">
+            <div layout="row" ng-if="!options.noSearch" style="margin-bottom:5px">
                 <md-button class="md-icon-button md-primary" ng-disabled="true">
                     <md-icon>&#xE8B6;</md-icon>
                 </md-button>
@@ -28,10 +28,10 @@
                     </tr>
                 </thead>
                 <tbody md-body>
-                    <tr md-row md-select="row" ng-repeat-start="row in table.rows | filter:searchText | limitTo: table.limit: (table.page - 1) * table.limit"
+                    <tr md-row md-select="row" ng-repeat-start="row in (options.serverSide ? table.rows : (table.rows | filter:searchText | limitTo: table.limit: (table.page - 1) * table.limit))"
                         ng-mouseover="row.mouserover=true" ng-mouseleave="row.mouserover=false" 
                         ng-class="{ 'md-selected': row.mouserover || rowSelected == row }"
-                        ng-click="table.detail(row, $event)">
+                        ng-click="table.detail(row, $event)" style="cursor:pointer">
                         <td md-cell ng-repeat="field in fields" ng-if="field.columnHiden != true">
                             <div ng-switch="ef(field.type, row)" ng-if="!field.columnTemplate">
                                 <span ng-switch-when="boolean">
@@ -48,7 +48,7 @@
                             </div>
                             <span ng-if="field.columnTemplate" ng-bind-html="stringToHtml(field.columnTemplate, row)"></span>
                         </td>
-                        <td md-cell>
+                        <td md-cell ng-if="!options.noDelete || !options.noEdit">
                             <md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.edit(row, $event)" ng-if="!options.noEdit">
                                 <md-icon>&#xE3C9;</md-icon>
                             </md-button>
@@ -72,7 +72,7 @@
             <md-table-pagination md-limit="table.limit"
                                  md-limit-options="table.limitOptions"
                                  md-page="table.page"
-                                 md-total="{{(table.rows | filter:searchText).length}}"
+                                 md-total="{{options.serverSide ? table.total : (table.rows | filter:searchText).length}}"
                                  md-page-select
                                  md-label="{{table.labels()}}"
                                  style="background-color: white">

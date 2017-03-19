@@ -48,7 +48,7 @@
                     </div>
                 </md-input-container>
                 <div class="md-block" flex ng-switch-when="image">
-                    <lf-ng-md-file-input name="{{field.name | translate}}" lf-files="files[field.name]" lf-mimetype="image/*"
+                    <lf-ng-md-file-input name="{{field.name}}" lf-files="files[field.name]" lf-mimetype="image/*"
                                             lf-placeholder="{{field.label}}" lf-browse-label="Abrir" lf-remove-label="Eliminar">
                     </lf-ng-md-file-input>
                     <div ng-messages="formCrud[field.name].$error">
