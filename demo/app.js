@@ -118,22 +118,20 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
         noSearch: false,
         fields: [
             {
-                name: 'first_name',
-                label: 'Firs name',
-                type: 'text',
-                required: true
+                name: 'name',
+                label: 'Name',
+                type: 'text'
             },
             {
-                name: 'last_name',
-                label: 'Last name',
-                type: 'text',
-                required: true
+                name: 'description',
+                label: 'Description',
+                type: 'text'
             },
             {
-                name: 'avatar',
-                label: 'Avatar',
-                type: 'image',
-                readonly: true
+                name: 'thumbnail',
+                label: 'Image',
+                type: 'template',
+                columnTemplate: '<image ng-switch-when="image" ng-src="{{thumbnail.path}}" style="max-height:90px"></image>'
             }
         ],
         serverSide: {
