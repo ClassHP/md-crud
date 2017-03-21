@@ -71,7 +71,7 @@
                 refresh: function (params) {
                     $scope.isLoading = true;
                     angular.extend(getParams, params);
-                    var optionsGet = angular.copy(options.http);
+                    var optionsGet = angular.copy(options.http || {});
                     optionsGet.entity = options.entity;
                     optionsGet.params = angular.copy(optionsGet.params || {});
                     angular.extend(optionsGet.params, getParams);
@@ -138,7 +138,7 @@
                     var index = this.rows.findIndex(function (r) {
                         return r[options.id] == rowId;
                     });
-                    var optionsHttp = angular.copy(options.http);
+                    var optionsHttp = angular.copy(options.http || {});
                     optionsHttp.entity = options.entity;
                     optionsHttp.id = rowId;
                     var deleteFunct = function () {

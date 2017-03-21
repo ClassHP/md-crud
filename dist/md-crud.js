@@ -1,6 +1,6 @@
 /**
  * md-crud - Angular material directive to create customizable CRUD forms.
- * @version v0.1.5
+ * @version v0.1.6
  * @link https://github.com/ClassHP/md-crud
  * @license MIT
  */
@@ -90,7 +90,7 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
                 refresh: function (params) {
                     $scope.isLoading = true;
                     angular.extend(getParams, params);
-                    var optionsGet = angular.copy(options.http);
+                    var optionsGet = angular.copy(options.http || {});
                     optionsGet.entity = options.entity;
                     optionsGet.params = angular.copy(optionsGet.params || {});
                     angular.extend(optionsGet.params, getParams);
@@ -157,7 +157,7 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
                     var index = this.rows.findIndex(function (r) {
                         return r[options.id] == rowId;
                     });
-                    var optionsHttp = angular.copy(options.http);
+                    var optionsHttp = angular.copy(options.http || {});
                     optionsHttp.entity = options.entity;
                     optionsHttp.id = rowId;
                     var deleteFunct = function () {
@@ -358,7 +358,7 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
 
             if (idValue) {                
                 $scope.isLoading = true;
-                var optionsHttp = angular.copy(options.http);
+                var optionsHttp = angular.copy(options.http || {});
                 optionsHttp.entity = options.entity;
                 optionsHttp.id = idValue;
                 crudService.getById(optionsHttp).then(function (response) {
@@ -375,7 +375,7 @@ $templateCache.put('/views/crudFormMessages.html','<div ng-message="required">{{
 
             $scope.save = function () {
                 var promise;
-                var optionsHttp = angular.copy(options.http);
+                var optionsHttp = angular.copy(options.http || {});
                 optionsHttp.entity = options.entity;
                 optionsHttp.data = $scope.item;
                 if (idValue) {                    
