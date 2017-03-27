@@ -69,11 +69,11 @@
                 <md-input-container class="md-block" flex ng-switch-when="select">
                     <label>{{translate(field.label)}}</label>
                     <md-select ng-model="item[field.name]" ng-if="field.multiple" multiple ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required">
-                        <md-option ng-value="mdSelectItem[field.value || 'value']" ng-repeat="mdSelectItem in ef(field.data, item)">{{mdSelectItem[field.text || 'text']}}</md-option>
+                        <md-option ng-value="option[field.value || 'value']" ng-repeat="option in ef(field.data, item)" md-crud-template="templateSelect(field)"></md-option>
                     </md-select>
                     <md-select ng-model="item[field.name]" ng-if="!field.multiple" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required">
                         <md-option ng-if="!field.required"></md-option>
-                        <md-option ng-value="mdSelectItem[field.value || 'value']" ng-repeat="mdSelectItem in ef(field.data, item)">{{mdSelectItem[field.text || 'text']}}</md-option>
+                        <md-option ng-value="option[field.value || 'value']" ng-repeat="option in ef(field.data, item)" md-crud-template="templateSelect(field)"></md-option>
                     </md-select>
                     <div ng-messages="formCrud[field.name].$error">
                         <div ng-messages-include="/views/crudFormMessages.html"></div>

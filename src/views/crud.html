@@ -15,7 +15,7 @@
         <div ng-if="formType == 'inline' && rowCreate">
             <md-card flex layout-fill style="background-color: white">
                 <md-crud-form options="options" ng-model="rowCreate" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel"
-                            on-sussces="onSussces" template-url="templateUrl" editable="true"></md-crud-form>
+                            on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="true"></md-crud-form>
             </md-card>
             <br/>
         </div>
@@ -33,22 +33,7 @@
                         ng-mouseover="row.mouserover=true" ng-mouseleave="row.mouserover=false" 
                         ng-class="{ 'md-selected': row.mouserover || rowSelected == row }"
                         ng-click="table.detail(row, $event)" style="cursor:pointer">
-                        <td md-cell ng-repeat="field in fields" ng-if="field.columnHiden != true">
-                            <div ng-switch="ef(field.type, row)" ng-if="!field.columnTemplate">
-                                <span ng-switch-when="boolean">
-                                    <md-switch ng-model="row[field.name]" ng-disabled="true" aria-label="{{translate(field.label)}}"></md-switch>
-                                </span>
-                                <image ng-switch-when="image" ng-src="{{row[field.name]}}" style="max-height:90px"></image>
-                                <span ng-switch-when="date">{{ row[field.name] | date:'shortDate' }}</span>
-                                <span ng-switch-when="time">{{ row[field.name] | date:'shortTime' }}</span>
-                                <span ng-switch-when="datetime">{{ row[field.name] | date:'short' }}</span>
-                                <span ng-switch-when="select">{{ getTextSelect(field, row) }}</span>
-                                <span ng-switch-default>
-                                    {{translate(row[field.name])}}
-                                </span>
-                            </div>
-                            <div ng-if="field.columnTemplate" ng-bind-html="stringToHtml(field.columnTemplate, row)"></div>
-                        </td>
+                        <td md-cell ng-repeat="field in fields" ng-if="field.columnHiden != true" md-crud-template="getTemplateColumn(field, row)"></td>
                         <td md-cell ng-if="!options.noDelete || !options.noEdit">
                             <md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.edit(row, $event)" ng-if="!options.noEdit">
                                 <md-icon>&#xE3C9;</md-icon>
@@ -62,9 +47,9 @@
                         <td colspan="{{fields.length + 1}}">
                             <md-card layout-fill style="background-color: white">
                                 <md-crud-form ng-if="formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" 
-                                           on-sussces="onSussces" template-url="templateUrl" editable="formEditable"></md-crud-form>
+                                           on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="formEditable"></md-crud-form>
                                 <md-crud-form ng-if="!formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" 
-                                           on-sussces="onSussces" template-url="templateUrl" editable="formEditable"></md-crud-form>
+                                           on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="formEditable"></md-crud-form>
                             </md-card>
                         </td>
                     </tr>

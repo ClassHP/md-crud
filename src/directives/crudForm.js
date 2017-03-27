@@ -5,9 +5,9 @@
         .module('mdCrudModule')
         .directive('mdCrudForm', crudFormDirective);
 
-    crudFormDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$injector'];
+    crudFormDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$injector', '$interpolate', '$sce', '$compile'];
 
-    function crudFormDirective(crudService, toolsService, $injector) {
+    function crudFormDirective(crudService, toolsService, $injector, $interpolate, $sce, $compile) {
         
         //Optional services
         var mdpTimePicker;
@@ -26,6 +26,7 @@
                 onEdit: "=",
                 onCancel: "=",
                 onSussces: "=",
+                onSubmit: "=",
                 templateUrl: "<?",
                 editable: "<?"
             },
@@ -39,7 +40,16 @@
 
             var translate = crudService.options.translate;
             $scope.translate = translate;
-            
+
+            $scope.stringToHtml = function(str, data) {
+                return $sce.trustAsHtml($interpolate(str)(data));
+            }
+
+            $scope.templateSelect = function(field) {
+                var html = field.templateSelect || "<translate>{{option." + (field.text || 'text') + "}}</translate>"
+                return html;
+            }
+
             var options = $scope.options;
             $scope.fields = options.fields;
             $scope.readonly = $scope.editable == false;
@@ -52,7 +62,7 @@
             $scope.formTitle = idValue ? (($scope.editable) ? text.editTitle : text.detailTitle) : text.createTitle;
             $scope.formType = idValue ? (($scope.editable) ? "edit" : "detail") : "create";
             $scope.fields = options.fields;
-            $scope.item = {};
+            $scope.item = angular.copy($scope.ngModel || {});
             $scope.getContentUrl = function(elem,attrs) {
                 return $scope.templateUrl || '/views/crudForm.html'
             }
@@ -87,6 +97,8 @@
             }
 
             $scope.save = function () {
+                if ($scope.onSubmit)
+                    $scope.onSubmit($scope.item, $scope.formType);
                 var promise;
                 var optionsHttp = angular.copy(options.http || {});
                 optionsHttp.entity = options.entity;

@@ -47,15 +47,23 @@
 
             $scope.isLoading = true;
 
-            $scope.getTextSelect = function(field, row) {
-                if(field.getTextSelect)
-                    return field.getTextSelect(field, row);
+            $scope.getTemplateColumn = function(field, row) {
+                var template = field.templateColumn || field.columnTemplate || crudService.templateColumns[field.type || 'default'] || crudService.templateColumns['default'];
+                return template.replace("row[field.name]", "row." + field.name);
+            }
+
+            $scope.getTemplateSelect = function(field) {
+                var html = field.templateSelect || "{{translate(option." + (field.text || 'text') + ")}}"
+                return html;
+            }
+
+            $scope.getOptionSelect = function(field, row) {
                 var data = tools.evalFunction(field.data, row);
                 for(var i in data) {
                     if(data[i][field.value] == row[field.name])
-                        return data[i][field.text];
+                        return data[i];
                 }
-                return row[field.name];
+                return row;
             }
 
             $scope.onSearchTextChange = function(text) {
@@ -234,6 +242,11 @@
                     $scope.table.rows.unshift(item);
                 $scope.rowSelected = null;
                 $scope.rowCreate = null;
+            };
+
+            $scope.onSubmit = function (item, type) {
+                if ((options.form || {}).onSubmit)
+                    options.form.onSubmit(item, type);
             };
 
             $scope.selectRow = function (item, editable) {

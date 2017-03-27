@@ -74,8 +74,23 @@
             formSubmit: 'Save',
         };
 
+        var templateColumns = {
+            boolean: '<span><md-switch ng-model="row[field.name]" ng-disabled="true" aria-label="{{translate(field.label)}}"></md-switch></span>',
+            image: '<image ng-src="{{row[field.name]}}" style="max-height:90px"></image>',
+            date: '<span>{{ row[field.name] | date:"shortDate" }}</span>',
+            time: '<span>{{ row[field.name] | date:"shortTime" }}</span>',
+            datetime: '<span>{{ row[field.name] | date:"short" }}</span>',
+            select: '<span md-crud-template="getTemplateSelect(field, row)" ng-init="option = getOptionSelect(field, row)"></span>',
+            text: '<span>{{translate(row[field.name])}}</span>',
+            default: '<span>{{translate(row[field.name])}}</span>'
+        };
+
         return {
+            templateColumns: templateColumns,
             options: defaultOptions,
+            setDefaultTemplateColumns: function(templates) {
+                angular.extend(templateColumns, tools.removeNull(templates));
+            },
             setDefaultOptions: function(options) {
                 angular.extend(defaultOptions, tools.removeNull(options));
             },

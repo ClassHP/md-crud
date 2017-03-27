@@ -3,7 +3,7 @@
 Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utilizando $http.
 
 ## Demo
-[Aplicación Demo](https://cdn.rawgit.com/ClassHP/md-crud/0.1.4/demo/index.html)
+[Aplicación Demo](https://classhp.github.io/md-crud/demo/)
 
 ## Dependecias
 ```javascript
