@@ -1,7 +1,7 @@
 ﻿<div layout-padding>
     <form name="formCrud" ng-submit="formCrud.$valid && save()" layout="row" layout-wrap novalidate>
         <div ng-repeat="field in fields" flex="{{field.flex || 'grow'}}" flex-xs="100" ng-style="field.style"
-                ng-if="(formType=='create' && !ef(field.createHiden, item)) || (formType=='edit' && !ef(field.editHiden, item)) || (formType=='detail' && !!ef(field.detailHiden, item))">
+                ng-if="(formType=='create' && !ef(field.createHiden, item)) || (formType=='edit' && !ef(field.editHiden, item)) || (formType=='detail' && !ef(field.detailHiden, item))">
             <div ng-switch="ef(field.type, item)" ng-if="!field.templateUrl">
                 <md-input-container class="md-block" flex ng-switch-default>
                     <label>{{translate(field.label)}}</label>
