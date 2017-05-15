@@ -34,7 +34,7 @@
                 </md-input-container>
                 <md-input-container class="md-block" flexemail flex ng-switch-when="integer">
                     <label>{{translate(field.label)}}</label>
-                    <input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required"
+                    <input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" md-crud-input-number
                         ng-disabled="field.readonly || readonly || isLoading" ng-min="field.min" ng-max="field.max" step="{{field.step || 1}}">
                     <div ng-messages="formCrud[field.name].$error">
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
@@ -42,7 +42,7 @@
                 </md-input-container>
                 <md-input-container class="md-block" flex ng-switch-when="decimal">
                     <label>{{translate(field.label)}}</label>
-                    <input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required"
+                    <input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" md-crud-input-number
                         ng-disabled="field.readonly || readonly || isLoading" ng-min="field.min" ng-max="field.max" step="{{field.step || 'any'}}">
                     <div ng-messages="formCrud[field.name].$error">
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
@@ -63,8 +63,13 @@
                     </ng-map>
                 </div>
                 <md-input-container class="md-block" flex ng-switch-when="boolean">
-                    <md-switch ng-model="item[field.name]" ng-disabled="field.readonly || readonly || isLoading" aria-label="field.label">
-                        {{translate(field.label)}}
+                    <md-switch ng-model="item[field.name]" ng-disabled="field.readonly || readonly || isLoading" aria-label="field.label" 
+                        ng-true-value="{{'\''+ field.trueValue + '\''}}" ng-if="field.trueValue">
+                        {{translate(((item[field.name] == field.trueValue) ? field.trueLabel : field.falseLabel) || field.label)}}
+                    </md-switch>
+                    <md-switch ng-model="item[field.name]" ng-disabled="field.readonly || readonly || isLoading" aria-label="field.label" 
+                        ng-if="!field.trueValue">
+                        {{translate((item[field.name] ? field.trueLabel : field.falseLabel) || field.label)}}
                     </md-switch>
                 </md-input-container>
                 <md-input-container class="md-block" flex ng-switch-when="select">

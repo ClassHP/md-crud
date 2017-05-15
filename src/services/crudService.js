@@ -75,7 +75,8 @@
         };
 
         var templateColumns = {
-            boolean: '<span><md-switch ng-model="row[field.name]" ng-disabled="true" aria-label="{{translate(field.label)}}"></md-switch></span>',
+            boolean: '<span><md-switch ng-model="row[field.name]" ng-disabled="true" aria-label="{{translate(field.label)}}" ng-true-value="{{\'\\\'\'+ field.trueValue + \'\\\'\'}}" ng-if="field.trueValue">{{translate(((row[field.name] == field.trueValue)? field.trueLabel : field.falseLabel) || "")}}</md-switch></span>'
+                + '<span><md-switch ng-model="row[field.name]" ng-disabled="true" aria-label="{{translate(field.label)}}" ng-if="!field.trueValue">{{translate((row[field.name] ? field.trueLabel : field.falseLabel) || "")}}</md-switch></span>',
             image: '<image ng-src="{{row[field.name]}}" style="max-height:90px"></image>',
             date: '<span>{{ row[field.name] | date:"shortDate" }}</span>',
             time: '<span>{{ row[field.name] | date:"shortTime" }}</span>',

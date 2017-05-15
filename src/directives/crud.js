@@ -12,7 +12,8 @@
             link: link,
             restrict: 'EA',
             scope: {
-                options: "="
+                options: "=",
+                onLoad: "="
             },
             templateUrl: '/views/crud.html'
         };
@@ -39,7 +40,7 @@
             $scope.rowSelected = null;
             $scope.rowCreate = null;
 
-            $scope.ef = tools.evalFunction;
+            var ef = $scope.ef = tools.evalFunction;
 
             $scope.stringToHtml = function(str, data) {
                 return $sce.trustAsHtml($interpolate(str)(data));
@@ -48,7 +49,7 @@
             $scope.isLoading = true;
 
             $scope.getTemplateColumn = function(field, row) {
-                var template = field.templateColumn || field.columnTemplate || crudService.templateColumns[field.type || 'default'] || crudService.templateColumns['default'];
+                var template = field.templateColumn || field.columnTemplate || crudService.templateColumns[ef(field.type, row) || 'default'] || crudService.templateColumns['default'];
                 return template.replace("row[field.name]", "row." + field.name);
             }
 
@@ -125,7 +126,11 @@
                     }
                 },
                 detail: function (row, ev) {
-                    ev.stopPropagation()
+                    if(options.editOnSelect) {
+                        $scope.table.edit(row, ev);
+                        return;
+                    }
+                    ev.stopPropagation();
                     if ($scope.formType == "inline") {
                         
                         if ($scope.rowSelected == row)
@@ -191,6 +196,11 @@
             options.refresh = function (params) {
                 $scope.table.refresh(params);
             }
+
+            options.create = function () {
+                $scope.table.create();
+            }
+
             if (autoRefresh) {
                 options.refresh();
             }
@@ -276,6 +286,8 @@
                 }
             }
 
+            if($scope.onLoad)
+                $scope.onLoad();
         }
     }
 })();
