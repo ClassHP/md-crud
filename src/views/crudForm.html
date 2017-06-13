@@ -6,45 +6,57 @@
                 <md-input-container class="md-block" flex ng-switch-default>
                     <label>{{translate(field.label)}}</label>
                     <input ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required"
-                            ng-disabled="field.readonly || readonly || isLoading" ng-minlength="field.minlength"
+                            ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" ng-minlength="field.minlength"
                             ng-maxlength="field.maxlength"
-                        ng-pattern="field.pattern">
-                    <div ng-messages="formCrud[field.name].$error">
+                            ng-blur="field.onChange && field.onChange(item, formType)"
+                            ng-pattern="field.pattern"
+                            md-crud-input-validator="field.errorMessage" item="item">
+                    <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
                     </div>
                 </md-input-container>
                 <md-input-container class="md-block" flex ng-switch-when="textarea">
                     <label>{{translate(field.label)}}</label>
                     <textarea ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required"
-                            ng-disabled="field.readonly || readonly || isLoading" ng-minlength="field.minlength"
-                            ng-maxlength="field.maxlength" rows="{{ field.rows || 3 }}" md-select-on-focus></textarea>
-                    <div ng-messages="formCrud[field.name].$error">
+                            ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" ng-minlength="field.minlength"
+                            ng-maxlength="field.maxlength" rows="{{ field.rows || 3 }}" md-select-on-focus
+                            ng-blur="field.onChange && field.onChange(item, formType)"
+                            md-crud-input-validator="field.errorMessage" item="item"></textarea>
+                    <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
                     </div>
                 </md-input-container>
                 <md-input-container class="md-block" flex ng-switch-when="email">
                     <label>{{translate(field.label)}}</label>
                     <input ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" type="email"
-                        ng-disabled="field.readonly || readonly || isLoading" ng-minlength="field.minlength"
+                        ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" ng-minlength="field.minlength"
                         ng-maxlength="field.maxlength"
-                        ng-pattern="field.pattern">
-                    <div ng-messages="formCrud[field.name].$error">
+                        ng-pattern="field.pattern"
+                        ng-blur="field.onChange && field.onChange(item, formType)"
+                        md-crud-input-validator="field.errorMessage" item="item">
+                    <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
                     </div>
                 </md-input-container>
                 <md-input-container class="md-block" flexemail flex ng-switch-when="integer">
                     <label>{{translate(field.label)}}</label>
                     <input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" md-crud-input-number
-                        ng-disabled="field.readonly || readonly || isLoading" ng-min="field.min" ng-max="field.max" step="{{field.step || 1}}">
-                    <div ng-messages="formCrud[field.name].$error">
+                        ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" 
+                        ng-min="field.min" ng-max="field.max" step="{{field.step || 1}}"
+                        ng-blur="field.onChange && field.onChange(item, formType)"
+                        md-crud-input-validator="field.errorMessage" item="item">
+                    <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
                     </div>
                 </md-input-container>
                 <md-input-container class="md-block" flex ng-switch-when="decimal">
                     <label>{{translate(field.label)}}</label>
                     <input type="number" ng-model="item[field.name]" name="{{field.name}}" ng-required="field.required" md-crud-input-number
-                        ng-disabled="field.readonly || readonly || isLoading" ng-min="field.min" ng-max="field.max" step="{{field.step || 'any'}}">
-                    <div ng-messages="formCrud[field.name].$error">
+                        ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" 
+                        ng-min="field.min" ng-max="field.max" step="{{field.step || 'any'}}"
+                        ng-blur="field.onChange && field.onChange(item, formType)"
+                        md-crud-input-validator="field.errorMessage" item="item">
+                    <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
                     </div>
                 </md-input-container>
@@ -52,7 +64,7 @@
                     <lf-ng-md-file-input name="{{field.name}}" lf-files="files[field.name]" lf-mimetype="image/*"
                                             lf-placeholder="{{field.label}}" lf-browse-label="Abrir" lf-remove-label="Eliminar">
                     </lf-ng-md-file-input>
-                    <div ng-messages="formCrud[field.name].$error">
+                    <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
                     </div>
                     <br />
@@ -63,32 +75,42 @@
                     </ng-map>
                 </div>
                 <md-input-container class="md-block" flex ng-switch-when="boolean">
-                    <md-switch ng-model="item[field.name]" ng-disabled="field.readonly || readonly || isLoading" aria-label="field.label" 
-                        ng-true-value="{{'\''+ field.trueValue + '\''}}" ng-if="field.trueValue">
+                    <md-switch ng-model="item[field.name]" ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" aria-label="field.label" 
+                            ng-true-value="{{'\''+ field.trueValue + '\''}}" ng-if="field.trueValue"
+                            ng-change="field.onChange && field.onChange(item, formType)">
                         {{translate(((item[field.name] == field.trueValue) ? field.trueLabel : field.falseLabel) || field.label)}}
                     </md-switch>
-                    <md-switch ng-model="item[field.name]" ng-disabled="field.readonly || readonly || isLoading" aria-label="field.label" 
-                        ng-if="!field.trueValue">
+                    <md-switch ng-model="item[field.name]" ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" aria-label="field.label" 
+                        ng-if="!field.trueValue" ng-change="field.onChange && field.onChange(item, formType)">
                         {{translate((item[field.name] ? field.trueLabel : field.falseLabel) || field.label)}}
                     </md-switch>
                 </md-input-container>
                 <md-input-container class="md-block" flex ng-switch-when="select">
                     <label>{{translate(field.label)}}</label>
-                    <md-select ng-model="item[field.name]" ng-if="field.multiple" multiple ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required">
+                    <md-select ng-model="item[field.name]" ng-if="field.multiple" multiple 
+                            ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading"
+                            ng-required="field.required" ng-change="field.onChange && field.onChange(item, formType)"
+                            md-crud-input-validator="field.errorMessage" item="item">
                         <md-option ng-value="option[field.value || 'value']" ng-repeat="option in ef(field.data, item)" md-crud-template="templateSelect(field)"></md-option>
                     </md-select>
-                    <md-select ng-model="item[field.name]" ng-if="!field.multiple" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required">
+                    <md-select ng-model="item[field.name]" ng-if="!field.multiple" 
+                            ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" 
+                            ng-required="field.required" ng-change="field.onChange && field.onChange(item, formType)"
+                            md-crud-input-validator="field.errorMessage" item="item">
                         <md-option ng-if="!field.required"></md-option>
                         <md-option ng-value="option[field.value || 'value']" ng-repeat="option in ef(field.data, item)" md-crud-template="templateSelect(field)"></md-option>
                     </md-select>
-                    <div ng-messages="formCrud[field.name].$error">
+                    <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
                     </div>
                 </md-input-container>
                 <md-input-container class="md-block" flex ng-switch-when="date">
                     <label>{{translate(field.label)}}</label>
-                    <md-datepicker ng-model="item[field.name]" name="{{field.name}}" md-min-date="field.minDate" md-max-date="field.maxDate" ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required"></md-datepicker>                
-                    <div ng-messages="formCrud[field.name].$error">
+                    <md-datepicker ng-model="item[field.name]" name="{{field.name}}" 
+                        md-min-date="ef(field.minDate, item)" md-max-date="ef(field.maxDate, item)" 
+                        ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" 
+                        ng-required="field.required"></md-datepicker>                
+                    <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
                     </div>
                 </md-input-container>
@@ -96,13 +118,17 @@
                     <label style="margin-left: 50px">{{translate(field.label)}}</label>   
                     <div class="" layout="row" layout-align="start start">
                         <md-button layout-nowrap ng-click="showTimePicker($event, item, field.name)" 
-                        class="md-datepicker-button md-icon-button md-button md-ink-ripple" ng-disabled="field.readonly || readonly || isLoading">                 
+                        class="md-datepicker-button md-icon-button md-button md-ink-ripple" ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading">                 
                             <md-icon>access_time</md-icon>
                         </md-button>
                         <div flex>
                             <input class="md-datepicker-input md-input" type="time" name="{{field.name}}" ng-model="item[field.name]" 
-                            ng-required="field.required" flex ng-min="field.min" ng-max="field.max" ng-disabled="field.readonly || readonly || isLoading">                    
-                            <div ng-messages="formCrud[field.name].$error">                                
+                            ng-required="field.required" flex ng-min="ef(field.min, item)" 
+                            ng-max="ef(field.max, item)" 
+                            ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading"
+                            ng-blur="field.onChange && field.onChange(item, formType)"
+                            md-crud-input-validator="field.errorMessage" item="item">                    
+                            <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>                                
                                 <div ng-messages-include="/views/crudFormMessages.html"></div>
                             </div>
                         </div>
@@ -111,36 +137,44 @@
                 <div class="md-block" ng-switch-when="datetime" flex layout="row" layout-align="start start">
                     <md-input-container flex="none">
                         <label>{{translate(field.label)}}</label>
-                        <md-datepicker layout-nowrap ng-model="item[field.name]" name="{{field.name}}" md-min-date="field.minDate" md-max-date="field.maxDate" 
-                        ng-disabled="field.readonly || readonly || isLoading" ng-required="field.required"></md-datepicker>
-                            <div ng-messages="formCrud[field.name].$error">                                
+                        <md-datepicker layout-nowrap ng-model="item[field.name]" name="{{field.name}}" 
+                            md-min-date="ef(field.minDate, item)" md-max-date="ef(field.maxDate, item)"
+                            ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" 
+                            ng-required="field.required"></md-datepicker>
+                            <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>                                
                                 <div ng-messages-include="/views/crudFormMessages.html"></div>
                             </div>
                     </md-input-container>
                     <md-input-container>
                         <div class="" layout="row" layout-align="start start">
-                            <md-button layout-nowrap ng-click="showTimePicker($event, item, field.name)" class="md-datepicker-button md-icon-button md-button md-ink-ripple" ng-disabled="field.readonly || readonly || isLoading">                 
+                            <md-button layout-nowrap ng-click="showTimePicker($event, item, field.name)" class="md-datepicker-button md-icon-button md-button md-ink-ripple" ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading">                 
                                 <md-icon>access_time</md-icon>
                             </md-button>
                             <div flex>
                                 <input class="md-datepicker-input md-input" type="time" name="{{field.name}}" ng-model="item[field.name]" 
-                                ng-required="field.required" flex ng-min="field.min" ng-max="field.max" ng-disabled="field.readonly || readonly || isLoading">
-                                <div ng-messages="formCrud[field.name].$error">                                
+                                ng-required="field.required" flex ng-min="field.min" ng-max="field.max" 
+                                ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading"
+                                ng-blur="field.onChange && field.onChange(item, formType)"
+                                md-crud-input-validator="field.errorMessage" item="item">
+                                <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>                                
                                     <div ng-messages-include="/views/crudFormMessages.html"></div>
                                 </div>
                             </div>
                         </div>
                     </md-input-container>
                 </div>
+                <div class="md-block" ng-switch-when="button" flex layout="row" layout-align="center center">
+                    <md-button ng-class="field.class" ng-click="field.onClick(item)">{{translate(field.label)}}</md-button>
+                </div>
                 <div class="md-block" flex ng-switch-when="label"><span>{{translate(field.label)}}</span></div>
             </div>            
             <div ng-if="field.templateUrl" ng-include="field.templateUrl"></div>
         </div>
         <div ng-repeat="message in errors" md-colors="{color:'warn'}" flex="grow">{{translate(message)}}</div>
-        <div layout="row" layout-align="center center" flex="grow">
+        <div layout="row" layout-align="center center" flex="grow" ng-if="!(formType=='detail' && options.noDetailButtons)">
             <md-button class="md-raised" ng-click="cancel()" ng-disabled="isLoading">{{translate(option.formCancelText || text.formCancel)}}</md-button>
             <div flex="5"></div>
-            <md-button class="md-raised md-primary" type="submit" ng-disabled="readonly || isLoading">{{translate(option.formSubmit || text.formSubmit)}}</md-button>
+            <md-button class="md-raised md-primary" type="submit" ng-disabled="ef(options.readonly, item) || readonly || isLoading">{{translate(option.formSubmit || text.formSubmit)}}</md-button>
         </div>
     </form>
 </div>

@@ -6,7 +6,8 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
     .accentPalette('blue-grey', { 'default': '500' })
     .warnPalette('orange');
 }])
-.controller('mainController', ['$scope', '$timeout', 'mdCrudService', function($scope, $timeout, mdCrudService){
+.controller('mainController', ['$scope', '$timeout', 'mdCrudService', 'mdCrudToolsService', 
+function($scope, $timeout, mdCrudService, mdCrudToolsService){
 
     $scope.btnSpanish = function() {
         mdCrudService.setDefaultText({
@@ -87,7 +88,11 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
                 name: 'Description',
                 label: 'Description',
                 type: 'textarea',
-                required: true
+                required: true,
+                errorMessage: function(value, item) {
+                    if(item.Title != value)
+                        return "El titulo y la descripcion deben ser iguales.";
+                }
             },
             {
                 name: 'Excerpt',
@@ -95,6 +100,14 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
                 type: 'textarea',
                 required: true,
                 columnHiden: true,
+            },
+            {
+                label: 'Test',
+                type: 'button',
+                class: 'md-raised',
+                onClick: function(item) {
+                    mdCrudToolsService.showAlert('Test', 'Test');
+                }
             }
         ],
         form: {
@@ -138,6 +151,8 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
             searchParam: 'nameStartsWith',
             offsetParam: 'offset',
             limitParam: 'limit',
+            dataResponse: 'results',
+            totalResponse: 'total'
         },
         http: {
             rootApi: 'https://gateway.marvel.com:443/v1/public',
@@ -151,9 +166,8 @@ angular.module('app', ['ngAnimate', 'ngMessages', 'ngSanitize', 'ngMaterial', 'm
                     });
                 }
                 else {
-                    resolve({ 
-                        data: response.data.data.results,
-                        total: response.data.data.total
+                    resolve({
+                        data: response.data.data
                     });
                 }
             }

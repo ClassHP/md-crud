@@ -62,9 +62,9 @@
                 }
                 return obj;
             },
-            evalFunction: function(opt, model) {
+            evalFunction: function(opt, p1, p2, p3, p4, p5) {
                 if(angular.isFunction(opt))
-                    return opt(model);
+                    return opt(p1, p2, p3, p4, p5);
                 return opt;
             },
             evalDefined: function (optArray) {

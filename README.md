@@ -168,7 +168,7 @@ $scope.crudOptions2 = {
 | ------ | ---- | ------- |
 | name | String | Nombre del campo. |
 | label | String | Texto a mostrar como cabecera en la columna de la tabla y como etiqueta en el formulario. |
-| type | String, Function | Tipo de campo. Posibles valores: ['text', 'textarea', 'email', 'integer', 'decimal', 'boolean', 'select', 'date', 'time', 'datetime']. |
+| type | String, Function | Tipo de campo. Posibles valores: ['text', 'textarea', 'email', 'integer', 'decimal', 'boolean', 'select', 'date', 'time', 'datetime', 'label', 'button']. |
 | multiple | Boolean | Indica si el tipo 'select' sera se selección multiple. |
 | columnHiden | Boolean | Oculta el campo en la tabla. |
 | createHiden | Boolean | Oculta el formulario al crear. |
@@ -192,6 +192,16 @@ $scope.crudOptions2 = {
 | flex | String | Personaliza el tamaño y posición del campo en el formulario. |
 | messagePattern | String | Personaliza el mensaje a mostrar cuando no se cumpla la expresion regular. |
 | rows | Integer | Cantidad de filas iniciales en el formulatio del tipo 'textarea'. |
+
+
+### Options -> Form
+| Params | Type | Details |
+| ------ | ---- | ------- |
+| onOpen | Function | Se ejecuta cuando se abre el formulario. |
+| onEdit | Function | Se ejecuta cuando se abre el formulario para editar luego de obtener el registro actualizado. |
+| onCancel | Function | Se ejecuta al cancelar el formulario. |
+| onSubmit | Function | Se ejecuta antes de enviar los datos del formulario. |
+| onSussces | Function | Se ejecuta cuando la respuesta del formulario es correcta. |
 
 ## Directiva
 ```html

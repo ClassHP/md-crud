@@ -27,5 +27,21 @@
               });
             }
         };
+    })
+    .directive("mdCrudInputValidator", function () {
+        return {
+            require: "ngModel",
+            scope: {
+                validator: "=mdCrudInputValidator",
+                item: "=item"
+            },
+            link: function (scope, element, attributes, ngModel) {
+                ngModel.$validators.mdCrudInputValidator = function (modelValue) {
+                    if(angular.isFunction(scope.validator))
+                        return !angular.isDefined(scope.validator(modelValue, scope.item))
+                    return !angular.isDefined(scope.validator);
+                };
+            }
+        };
     });    
 })();

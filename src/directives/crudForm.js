@@ -77,7 +77,7 @@
             } 
 
             if ($scope.onOpen)
-                $scope.onOpen($scope.item);
+                $scope.onOpen($scope.item, $scope.formType);
 
             if (idValue) {                
                 $scope.isLoading = true;

@@ -44,12 +44,12 @@
                         </td>
                     </tr>
                     <tr ng-repeat-end ng-if="rowSelected == row">
-                        <td colspan="{{fields.length + 1}}">
+                        <td colspan="{{fields.length + 1}}" style="max-width: 0">
                             <md-card layout-fill style="background-color: white">
                                 <md-crud-form ng-if="formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" 
-                                           on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="formEditable"></md-crud-form>
+                                        on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="formEditable"></md-crud-form>
                                 <md-crud-form ng-if="!formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" 
-                                           on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="formEditable"></md-crud-form>
+                                        on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="formEditable"></md-crud-form>
                             </md-card>
                         </td>
                     </tr>

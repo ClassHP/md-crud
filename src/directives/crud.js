@@ -54,7 +54,7 @@
             }
 
             $scope.getTemplateSelect = function(field) {
-                var html = field.templateSelect || "{{translate(option." + (field.text || 'text') + ")}}"
+                var html = field.templateSelect || "{{translate(getOptionSelect(field, row)." + (field.text || 'text') + ")}}"
                 return html;
             }
 
@@ -69,10 +69,15 @@
 
             $scope.onSearchTextChange = function(text) {
                 $scope.searchText = text;
-                if(options.serverSide && options.serverSide.searchParam) {
+                if(options.serverSide && serverSide.searchParam) {
                     $scope.table.page = 1;
                     options.refresh();
                 }
+            }
+            
+            var serverSide = angular.copy(crudService.options.serverSide || {});
+            if(options.serverSide && !(typeof options.serverSide === 'boolean')) {
+                angular.extend(serverSide, options.serverSide);
             }
 
             $scope.table = {
@@ -85,25 +90,24 @@
                     optionsGet.params = angular.copy(optionsGet.params || {});
                     angular.extend(optionsGet.params, getParams);
                     if(options.serverSide) {
-                        if(options.serverSide.pageParam)
-                            optionsGet.params[options.serverSide.pageParam || 'page'] = $scope.table.page;
-                        if(options.serverSide.offsetParam)
-                            optionsGet.params[options.serverSide.offsetParam || 'offset'] = ($scope.table.page - 1) * $scope.table.limit;
-                        if(options.serverSide.limitParam)
-                            optionsGet.params[options.serverSide.limitParam || 'limit'] = $scope.table.limit;
-                        if(options.serverSide.searchParam)
-                            optionsGet.params[options.serverSide.searchParam || 'search'] = ($scope.searchText != "") ? $scope.searchText : undefined;
+                        optionsGet.params[serverSide.pageParam] = $scope.table.page;
+                        optionsGet.params[serverSide.offsetParam] = ($scope.table.page - 1) * $scope.table.limit;
+                        optionsGet.params[serverSide.limitParam] = $scope.table.limit;
+                        optionsGet.params[serverSide.searchParam] = ($scope.searchText != "") ? $scope.searchText : undefined;
                     }
                     $scope.table.promise = crudService.get(optionsGet).then(function (response) {
                         $scope.isLoading = false;
-                        $scope.table.rows = response.data;
                         if(options.serverSide) {
-                            $scope.table.total = response.total;
+                            $scope.table.rows = response.data[serverSide.dataResponse];
+                            $scope.table.total = response.data[serverSide.totalResponse];
                         }
+                        else
+                            $scope.table.rows = response.data;
                     });
                 },
                 create: function (ev) {
-                    ev.stopPropagation();
+                    if(ev)
+                        ev.stopPropagation();
                     $scope.rowSelected = null;
                     $scope.rowCreate = {};
                     if ($scope.formType == "window") {
@@ -116,6 +120,7 @@
                     ev.stopPropagation();
                     if(row[options.id]) {
                         if ($scope.formType == "inline") {
+                            $scope.rowCreate = null;
                             $scope.selectRow(row, true);
                         }
                         if ($scope.formType == "window") {
@@ -132,7 +137,7 @@
                     }
                     ev.stopPropagation();
                     if ($scope.formType == "inline") {
-                        
+                        $scope.rowCreate = null;
                         if ($scope.rowSelected == row)
                             $scope.rowSelected = null; 
                         else if (!options.noDetail)
@@ -226,9 +231,9 @@
 
             $scope.templateUrl = (options.form || {}).templateUrl;
 
-            $scope.onOpen = function (item) {
+            $scope.onOpen = function (item, formType) {
                 if ((options.form || {}).onOpen)
-                    options.form.onOpen(item);
+                    options.form.onOpen(item, formType);
             };
 
             $scope.onEdit = function (item) {
@@ -248,7 +253,7 @@
             $scope.onSussces = function (item, type) {
                 if ((options.form || {}).onSussces)
                     options.form.onSussces(item, type);
-                if (type == "create")
+                if (type == "create" && !options.noCreateAdd)
                     $scope.table.rows.unshift(item);
                 $scope.rowSelected = null;
                 $scope.rowCreate = null;

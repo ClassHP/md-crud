@@ -8,3 +8,4 @@
 <div ng-message="valid">{{translate(field.messageValid || text.messageValid)}}</div>
 <div ng-message="mindate">{{translate(field.messageMindate || text.messageMindate)}} {{field.minDate | date:'shortDate'}}.</div>
 <div ng-message="maxdate">{{translate(field.messageMaxdate || text.messageMaxdate)}}  {{field.maxDate | date:'shortDate'}}.</div>
+<div ng-message="mdCrudInputValidator">{{translate(ef(field.errorMessage, item[field.name], item))}}</div>

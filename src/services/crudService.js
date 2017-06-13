@@ -42,6 +42,14 @@
                 return text;
             },
             autoRefresh: true,
+            serverSide: {
+                pageParam: 'page',
+                offsetParam: 'offset',
+                limitParam: 'limit',
+                searchParam: 'search',
+                dataResponse: 'data',
+                totalResponse: 'total'
+            }
         };     
 
         var defaultText = {
@@ -81,8 +89,9 @@
             date: '<span>{{ row[field.name] | date:"shortDate" }}</span>',
             time: '<span>{{ row[field.name] | date:"shortTime" }}</span>',
             datetime: '<span>{{ row[field.name] | date:"short" }}</span>',
-            select: '<span md-crud-template="getTemplateSelect(field, row)" ng-init="option = getOptionSelect(field, row)"></span>',
+            select: '<span md-crud-template="getTemplateSelect(field, row)"></span>',
             text: '<span>{{translate(row[field.name])}}</span>',
+            button: '<md-button ng-class="field.class" ng-click="field.onClick(row, $event) || $event.stopPropagation()">{{translate(field.label)}}</md-button>',
             default: '<span>{{translate(row[field.name])}}</span>'
         };
 
