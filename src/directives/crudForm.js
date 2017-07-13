@@ -5,9 +5,9 @@
         .module('mdCrudModule')
         .directive('mdCrudForm', crudFormDirective);
 
-    crudFormDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$injector', '$interpolate', '$sce', '$compile'];
+    crudFormDirective.$inject = ['mdCrudService', 'mdCrudToolsService', '$injector', '$interpolate', '$sce', '$compile', '$document'];
 
-    function crudFormDirective(crudService, toolsService, $injector, $interpolate, $sce, $compile) {
+    function crudFormDirective(crudService, toolsService, $injector, $interpolate, $sce, $compile, $document) {
         
         //Optional services
         var mdpTimePicker;
@@ -136,7 +136,16 @@
             $scope.onMarkerDrag = function (event) {
                 $scope.item[this.data.lat] = event.latLng.lat();
                 $scope.item[this.data.lng] = event.latLng.lng();
-            }           
+            }        
+            $scope.isFormValid = function(formCrud) {
+                if(!formCrud.$valid) {
+                    //angular.element('input.ng-invalid').first().focus();
+                    //angular.element($document[0].querySelector('.ng-invalid')).focus();
+                    $document[0].querySelector('form .ng-invalid').focus();
+                    return false;
+                }
+                return true;
+            }
         }
     }
 })();

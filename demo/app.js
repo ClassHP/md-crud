@@ -41,6 +41,12 @@ function($scope, $timeout, mdCrudService, mdCrudToolsService){
         });
     }
 
+    var types = [
+        { value: 'text', text: 'Text' },
+        { value: 'integer', text: 'Integer' },
+        { value: 'decimal', text: 'Decimal' }
+    ];
+
     $scope.crudOptions = {
         entity: 'Books',
         id: 'ID',
@@ -62,11 +68,12 @@ function($scope, $timeout, mdCrudService, mdCrudToolsService){
                 type: 'select',
                 columnHiden: true,
                 detailHiden: true,
-                data: [
-                    { value: 'text', text: 'Text' },
-                    { value: 'integer', text: 'Integer' },
-                    { value: 'decimal', text: 'Decimal' }
-                ],
+                data: function () {
+                    return types;
+                },
+                onChange: function(item) {
+                    mdCrudToolsService.showAlert('Test', 'Test');
+                },
                 flex: '25'
             },
             {

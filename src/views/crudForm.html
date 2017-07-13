@@ -1,5 +1,5 @@
 ﻿<div layout-padding>
-    <form name="formCrud" ng-submit="formCrud.$valid && save()" layout="row" layout-wrap novalidate>
+    <form name="formCrud" ng-submit="isFormValid(formCrud) && save()" layout="row" layout-wrap novalidate>
         <div ng-repeat="field in fields" flex="{{field.flex || 'grow'}}" flex-xs="100" ng-style="field.style"
                 ng-if="(formType=='create' && !ef(field.createHiden, item)) || (formType=='edit' && !ef(field.editHiden, item)) || (formType=='detail' && !ef(field.detailHiden, item))">
             <div ng-switch="ef(field.type, item)" ng-if="!field.templateUrl">
@@ -87,16 +87,18 @@
                 </md-input-container>
                 <md-input-container class="md-block" flex ng-switch-when="select">
                     <label>{{translate(field.label)}}</label>
-                    <md-select ng-model="item[field.name]" ng-if="field.multiple" multiple 
+                    <md-select ng-model="item[field.name]" ng-if="field.multiple" name="{{field.name}}" multiple 
                             ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading"
                             ng-required="field.required" ng-change="field.onChange && field.onChange(item, formType)"
-                            md-crud-input-validator="field.errorMessage" item="item">
+                            md-crud-input-validator="field.errorMessage" item="item"
+                            md-on-open="field.onOpen(item)">
                         <md-option ng-value="option[field.value || 'value']" ng-repeat="option in ef(field.data, item)" md-crud-template="templateSelect(field)"></md-option>
                     </md-select>
-                    <md-select ng-model="item[field.name]" ng-if="!field.multiple" 
+                    <md-select ng-model="item[field.name]" ng-if="!field.multiple" name="{{field.name}}" 
                             ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" 
                             ng-required="field.required" ng-change="field.onChange && field.onChange(item, formType)"
-                            md-crud-input-validator="field.errorMessage" item="item">
+                            md-crud-input-validator="field.errorMessage" item="item"
+                            md-on-open="field.onOpen(item)">
                         <md-option ng-if="!field.required"></md-option>
                         <md-option ng-value="option[field.value || 'value']" ng-repeat="option in ef(field.data, item)" md-crud-template="templateSelect(field)"></md-option>
                     </md-select>
@@ -109,7 +111,8 @@
                     <md-datepicker ng-model="item[field.name]" name="{{field.name}}" 
                         md-min-date="ef(field.minDate, item)" md-max-date="ef(field.maxDate, item)" 
                         ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" 
-                        ng-required="field.required"></md-datepicker>                
+                        ng-required="field.required"
+                        ng-change="field.onChange && field.onChange(item, formType)"></md-datepicker>                
                     <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>
                         <div ng-messages-include="/views/crudFormMessages.html"></div>
                     </div>
@@ -123,11 +126,12 @@
                         </md-button>
                         <div flex>
                             <input class="md-datepicker-input md-input" type="time" name="{{field.name}}" ng-model="item[field.name]" 
-                            ng-required="field.required" flex ng-min="ef(field.min, item)" 
-                            ng-max="ef(field.max, item)" 
-                            ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading"
-                            ng-blur="field.onChange && field.onChange(item, formType)"
-                            md-crud-input-validator="field.errorMessage" item="item">                    
+                                md-crud-input-date
+                                ng-required="field.required" flex ng-min="ef(field.min, item)" 
+                                ng-max="ef(field.max, item)" 
+                                ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading"
+                                ng-blur="field.onChange && field.onChange(item, formType)"
+                                md-crud-input-validator="field.errorMessage" item="item" />                    
                             <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>                                
                                 <div ng-messages-include="/views/crudFormMessages.html"></div>
                             </div>
@@ -140,10 +144,11 @@
                         <md-datepicker layout-nowrap ng-model="item[field.name]" name="{{field.name}}" 
                             md-min-date="ef(field.minDate, item)" md-max-date="ef(field.maxDate, item)"
                             ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading" 
-                            ng-required="field.required"></md-datepicker>
-                            <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>                                
-                                <div ng-messages-include="/views/crudFormMessages.html"></div>
-                            </div>
+                            ng-required="field.required"
+                            ng-change="field.onChange && field.onChange(item, formType)"></md-datepicker>
+                        <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>                                
+                            <div ng-messages-include="/views/crudFormMessages.html"></div>
+                        </div>
                     </md-input-container>
                     <md-input-container>
                         <div class="" layout="row" layout-align="start start">
@@ -152,10 +157,11 @@
                             </md-button>
                             <div flex>
                                 <input class="md-datepicker-input md-input" type="time" name="{{field.name}}" ng-model="item[field.name]" 
-                                ng-required="field.required" flex ng-min="field.min" ng-max="field.max" 
-                                ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading"
-                                ng-blur="field.onChange && field.onChange(item, formType)"
-                                md-crud-input-validator="field.errorMessage" item="item">
+                                    md-crud-input-date
+                                    ng-required="field.required" flex ng-min="field.min" ng-max="field.max" 
+                                    ng-disabled="ef(field.readonly, item) || ef(options.readonly, item) || readonly || isLoading"
+                                    ng-blur="field.onChange && field.onChange(item, formType)"
+                                    md-crud-input-validator="field.errorMessage" item="item" />
                                 <div ng-messages="formCrud[field.name].$error" ng-messages-multiple>                                
                                     <div ng-messages-include="/views/crudFormMessages.html"></div>
                                 </div>
@@ -172,9 +178,9 @@
         </div>
         <div ng-repeat="message in errors" md-colors="{color:'warn'}" flex="grow">{{translate(message)}}</div>
         <div layout="row" layout-align="center center" flex="grow" ng-if="!(formType=='detail' && options.noDetailButtons)">
-            <md-button class="md-raised" ng-click="cancel()" ng-disabled="isLoading">{{translate(option.formCancelText || text.formCancel)}}</md-button>
+            <md-button class="md-raised" ng-click="cancel()" ng-disabled="isLoading">{{translate(options.formCancelText || text.formCancel)}}</md-button>
             <div flex="5"></div>
-            <md-button class="md-raised md-primary" type="submit" ng-disabled="ef(options.readonly, item) || readonly || isLoading">{{translate(option.formSubmit || text.formSubmit)}}</md-button>
+            <md-button class="md-raised md-primary" type="submit" ng-disabled="ef(options.readonly, item) || readonly || isLoading">{{translate(options.formSubmitText || text.formSubmit)}}</md-button>
         </div>
     </form>
 </div>

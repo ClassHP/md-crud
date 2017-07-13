@@ -206,6 +206,12 @@
                 $scope.table.create();
             }
 
+            options.cancel = function () {
+                $scope.rowSelected = null;
+                $scope.rowCreate = null;
+                $mdDialog.cancel();
+            }
+
             if (autoRefresh) {
                 options.refresh();
             }
