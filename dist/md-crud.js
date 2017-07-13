@@ -1,6 +1,6 @@
 /**
  * md-crud - Angular material directive to create customizable CRUD forms.
- * @version v0.1.16
+ * @version v0.1.17
  * @link https://github.com/ClassHP/md-crud
  * @license MIT
  */
