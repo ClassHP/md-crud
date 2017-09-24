@@ -13,7 +13,8 @@
             restrict: 'EA',
             scope: {
                 options: "=",
-                onLoad: "="
+                onLoad: "=",
+                rows: "="
             },
             templateUrl: '/views/crud.html'
         };
@@ -46,7 +47,8 @@
                 return $sce.trustAsHtml($interpolate(str)(data));
             }
 
-            $scope.isLoading = true;
+            if(!options.offline)
+                $scope.isLoading = true;
 
             $scope.getTemplateColumn = function(field, row) {
                 var template = field.templateColumn || field.columnTemplate || crudService.templateColumns[ef(field.type, row) || 'default'] || crudService.templateColumns['default'];
@@ -54,14 +56,15 @@
             }
 
             $scope.getTemplateSelect = function(field) {
-                var html = field.templateSelect || "{{translate(getOptionSelect(field, row)." + (field.text || 'text') + ")}}"
-                return html;
+                if(field.templateSelect)
+                    return field.templateSelect.replace('option', 'getOptionSelect(field, row)');
+                return "{{translate(getOptionSelect(field, row)." + (field.text || 'text') + ")}}";
             }
 
             $scope.getOptionSelect = function(field, row) {
                 var data = tools.evalFunction(field.data, row);
                 for(var i in data) {
-                    if(data[i][field.value] == row[field.name])
+                    if(data[i][field.value || 'value'] == row[field.name])
                         return data[i];
                 }
                 return row;
@@ -80,8 +83,34 @@
                 angular.extend(serverSide, options.serverSide);
             }
 
+            $scope.countFieldsColums = function() {
+                var count = 0;
+                for(var i in options.fields) {
+                    var field = options.fields[i];
+                    if(!field.columnHiden && !field.columnHidden) {
+                        count++;
+                    }
+                }
+                return count + 2;
+            }
+
+            //Cargar datos de tipos select
+            var loadDataSelect = function(field) {
+                if(!field.data) {
+                    crudService.get({ entity: field.entity }).then(function (response) {
+                        field.data = response.data;
+                    });
+                }
+            }            
+            for(var i in options.fields) {
+                var field = options.fields[i];
+                if(field.entity) {
+                    loadDataSelect(field);
+                }
+            }
+
             $scope.table = {
-                rows: [],
+                rows: $scope.rows || [],
                 refresh: function (params) {
                     $scope.isLoading = true;
                     angular.extend(getParams, params);
@@ -151,23 +180,32 @@
                 },
                 delete: function (rowId, ev) {
                     $scope.rowSelected = null; 
-                    ev.stopPropagation()
+                    ev.stopPropagation();
                     var t = this;
                     var index = this.rows.findIndex(function (r) {
                         return r[options.id] == rowId;
                     });
-                    var optionsHttp = angular.copy(options.http || {});
-                    optionsHttp.entity = options.entity;
-                    optionsHttp.id = rowId;
-                    var deleteFunct = function () {
-                        crudService.delete(optionsHttp).then(function (data) {
+                    var deleteFunct;
+                    if(!options.offline) {
+                        var optionsHttp = angular.copy(options.http || {});
+                        optionsHttp.entity = options.entity;
+                        optionsHttp.id = rowId;
+                        deleteFunct = function () {
+                            crudService.delete(optionsHttp).then(function (data) {
+                                t.rows.splice(index, 1);
+                            }, function (data) {
+                                var error = text.deleteError;
+                                if (data && data.error)
+                                    error = data.error;
+                                tools.showAlert(translate(text.deleteErrorTitle), translate(error), translate(text.btnAlertOk));
+                            });
+                        };
+                    }
+                    else {
+                        deleteFunct = function () {
                             t.rows.splice(index, 1);
-                        }, function (error) {
-                            if (!error)
-                                error = text.deleteError;
-                            tools.showAlert(translate(text.deleteErrorTitle), translate(error), translate(text.btnAlertOk));
-                        });
-                    };
+                        }
+                    }
                     if(deleteConfirm) {
                         tools.showConfirm(translate(text.deleteConfirmTitle), translate(text.deleteConfirmMessage), translate(text.deleteConfirmOk), 
                         translate(text.btnConfirmCancel), translate(text.btnConfirmCancel)).then(function () {
@@ -247,6 +285,11 @@
                     options.form.onEdit(item);
             };
 
+            $scope.onDetail = function (item) {
+                if ((options.form || {}).onDetail)
+                    options.form.onDetail(item);
+            };
+
             $scope.onCancel = function (error) {
                 if ((options.form || {}).onCancel)
                     options.form.onCancel(error);
@@ -280,20 +323,18 @@
                 //$scope.options = options;
                 $scope.item = item;
 
-                $scope.onCancelDialog = function (item) {
-                    if ((options.form || {}).onCancel)
-                        options.form.onCancel(item);
+                $scope.onCancelDialog = function (error) {
+                    $scope.onCancel(error);
                     $mdDialog.cancel();
                 };
 
                 $scope.onSusscesDialog = function (item, type) {
-                    if ((options.form || {}).onSussces)
-                        options.form.onSussces(item, type);
+                    $scope.onSussces(item, type);
                     $mdDialog.hide(item);
                 };
 
                 $scope.cancelDialog = function () {
-                    $scope.onCancelDialog(item);
+                    $scope.onCancelDialog();
                 }
             }
 

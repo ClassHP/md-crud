@@ -20,7 +20,7 @@ Permite crear un cotrol CRUD simple o personalizado sobre un RESTful Api utiliza
 }
 ```
 ## CDN
-[https://cdn.rawgit.com/ClassHP/md-crud/0.1.4/dist/md-crud.min.js](https://cdn.rawgit.com/ClassHP/md-crud/0.1.4/dist/md-crud.min.js)
+[https://cdn.rawgit.com/ClassHP/md-crud/1.0.0/dist/md-crud.min.js](https://cdn.rawgit.com/ClassHP/md-crud/1.0.0/dist/md-crud.min.js)
 
 ## npm
 ```sh
@@ -48,8 +48,8 @@ $scope.crudOptions = {
             name: 'type',
             label: 'Type',
             type: 'select',
-            columnHiden: true,
-            detailHiden: true,
+            columnHidden: true,
+            detailHidden: true,
             data: [
                 { value: 'text', text: 'Text' },
                 { value: 'integer', text: 'Integer' },
@@ -69,7 +69,7 @@ $scope.crudOptions = {
             label: 'Publish date',
             type: 'datetime',
             required: true,
-            columnTemplate: '<strong>{{PublishDate | date:"short"}}</strong>',
+            columnTemplate: '<strong>{{row.PublishDate | date:"short"}}</strong>',
             flex: '33'
         },
         {
@@ -83,7 +83,7 @@ $scope.crudOptions = {
             label: 'Excerpt',
             type: 'textarea',
             required: true,
-            columnHiden: true,
+            columnHidden: true,
         }
     ]
 }; 
@@ -103,7 +103,7 @@ $scope.crudOptions2 = {
             name: 'thumbnail',
             label: 'Image',
             type: 'template',
-            columnTemplate: '<image src="{{thumbnail.path + "/standard_medium." + thumbnail.extension}}" style="max-height:90px"></image>'
+            columnTemplate: '<image src="{{row.thumbnail.path + "/standard_medium." + row.thumbnail.extension}}" style="max-height:90px"></image>'
         },
         {
             name: 'name',
@@ -139,9 +139,20 @@ $scope.crudOptions2 = {
                 });
             }
         }
+    },
+    form: {
+        onEdit: function (item) {
+            item.aditionalValue = 1;
+        }
     }
 };
 ```
+### Properties
+| Params | Type | Details |
+| ------ | ---- | ------- |
+| options | Object | Objeto de configuración. |
+| onLoad | Function | Evento que se ejecuta al terminar de cargar la directiva. |
+| rows | Array | Arreglo de filas a mostar en CRUDs offlines. |
 
 ### Options
 | Params | Type | Details |
@@ -156,25 +167,32 @@ $scope.crudOptions2 = {
 | fields | Array | Arreglo de campos a usar en el CRUD. |
 | serverSide | Boolean, Object | Habilita el paginado y busqueda del lado del servidor. Valor por defecto: false. |
 | http | Object | Configuración de las consultas al RESTfull Api. |
-| formType | String | Tipo de formulario. Posibles valores: ['inline', 'wondow']. Valor por defecto: 'inline'. |
+| formType | String | Tipo de formulario. Posibles valores: ['inline', 'window']. Valor por defecto: 'inline'. |
 | deleteConfirm | Boolean | Indica si se solicitará conformación al intentar eliminar un registro. Valor por defecto: true. |
 | searchText | String | Texto a buscar por defecto. |
 | searchDelay | Integer | Tiempo en miliseguntos de retraso en escribir en el campo de busqueda. |
 | tableLimit | Integer | Cantidad de filas por paginas a mostrar en la tabla. |
 | limitOptions | Array(Integer) | Opciones para elegir la cantidad de filas a mostrar por pagina. Valor por defecto: [10, 20, 30]. |
+| editOnSelect | Boolean | Desactiva la funcionalidad de detalle y al presionar la fila abre el formulario de editar. |
+| noDetailButtons | Boolean | Oculta los botones de Aceptar y Cancelar del formulario de detalle. |
+| noButtons | Boolean | Oculta los botones de Aceptar y Cancelar del formulario de detalle y editar. |
+| offline | Boolean | Desabilita todas las funcionalidades de carga y actualización a travez de $http, utiliza como modelo de datos la propiedad 'rows' en la directiva. |
+| noPaginate | Boolean | Desabilita la paginación. |
+| windowFlex | String | Aplica la propiedad flex para aujustar el tamaño de las ventanas de edición y detalle. |
 
-### Options -> Fields
+### Options -> fields
 | Params | Type | Details |
 | ------ | ---- | ------- |
 | name | String | Nombre del campo. |
 | label | String | Texto a mostrar como cabecera en la columna de la tabla y como etiqueta en el formulario. |
 | type | String, Function | Tipo de campo. Posibles valores: ['text', 'textarea', 'email', 'integer', 'decimal', 'boolean', 'select', 'date', 'time', 'datetime', 'label', 'button']. |
 | multiple | Boolean | Indica si el tipo 'select' sera se selección multiple. |
-| columnHiden | Boolean | Oculta el campo en la tabla. |
-| createHiden | Boolean | Oculta el formulario al crear. |
-| editHiden | Boolean | Oculta el campo en el formulario al editar. |
-| detailHiden | Boolean | Oculta el formulario al ver el detalle. |
-| templateUrl | String | Url de la plantilla a utilizar para personalizar el formulario. Es necesario que no se tenga valor en el campo "name".|
+| columnHidden | Boolean | Oculta el campo en la tabla. |
+| createHidden | Boolean | Oculta el formulario al crear. |
+| editHidden | Boolean | Oculta el campo en el formulario al editar. |
+| detailHidden | Boolean | Oculta el formulario al ver el detalle. |
+| templateUrl | String | Url de la plantilla a utilizar para personalizar el formulario. |
+| template | String | Template HTML con el formato a utilizar en el formulario. |
 | columnTemplate | String | Plantilla a utilizar para mostrar el campo en la tabla. |
 | readonly | Boolean | Coloca el campo en solo lectura o deshabilitado. |
 | minlength | Integer | Define la cantidad mínima de caracteres para los campos de texto. |
@@ -192,9 +210,11 @@ $scope.crudOptions2 = {
 | flex | String | Personaliza el tamaño y posición del campo en el formulario. |
 | messagePattern | String | Personaliza el mensaje a mostrar cuando no se cumpla la expresion regular. |
 | rows | Integer | Cantidad de filas iniciales en el formulatio del tipo 'textarea'. |
+| columnHeader | String | Texto de la cabecera de la columna en la tabla. Por defecto es igual al campo "label". |
+| styleCell | Object | Estilo CSS de la celda en la tabla. |
+| hideErrorMsg | Boolean | Oculta el espacio reservado para los mensajes de error. |
 
-
-### Options -> Form
+### Options -> form
 | Params | Type | Details |
 | ------ | ---- | ------- |
 | onOpen | Function | Se ejecuta cuando se abre el formulario. |
@@ -203,18 +223,94 @@ $scope.crudOptions2 = {
 | onSubmit | Function | Se ejecuta antes de enviar los datos del formulario. |
 | onSussces | Function | Se ejecuta cuando la respuesta del formulario es correcta. |
 
-## Directiva
-```html
-<md-crud options="crudOptions"></md-crud>
-```
+### Options -> http
+| Params | Type | Default value | Details |
+| ---- | ---- | ---- | ---- |
+| rootApi | String | '/api' | Configura la ruta inicial del REST Api a consultar. |
+| methodGet | String | 'GET' | Metodo HTTP a utilizar para la consultas. |
+| methodPost | String | 'POST' | Metodo HTTP a utilizar en la creación. |
+| methodPatch | String | 'PATCH' | Metodo HTTP a utilizar en la edición. |
+| methodDelete | String | 'DELETE' | Metodo HTTP a utilizar en la eliminación. |
+| urlGet | String (template) | '{{rootApi}}/{{entity}}' | Url para obtener los datos de la tabla. |
+| urlGetById | String (template) | '{{rootApi}}/{{entity}}/{{id}}' | Url para obtener los datos de edición o detalle. |
+| urlPost | String (template) | '{{rootApi}}/{{entity}}' | Url de la creación. |
+| urlPatch | String (template) | '{{rootApi}}/{{entity}}/{{id}}' | Url de la edición. |
+| urlDelete | String (template) | '{{rootApi}}/{{entity}}/{{id}}' | Url de la eliminación. |
+| functionHttp | Function | function(options, method) { ... } | Función usada para obtener datos desde el REST Api. |
+| functionData | Function | function(response, resolve, reject, method) { resolve(response) } | Función para tratar los datos devueltos por el REST Api. |
 
+## Directivas
+```html
+<md-crud options="options" onLoad="onLoad" rows="rows"></md-crud>
+
+<md-crud-form options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-detail="onDetail" 
+    on-cancel="onCancel" on-sussces="onSussces" on-submit="onSubmit" editable="true" model-copy="true">
+</md-crud-form>
+
+<md-crud-form-base flex layout="row" layout-wrap options="options" ng-model="item" form-type="edit" 
+    editable="true" form-crud="formCrud" is-loading="false">
+</md-crud-form-base>
+```
 
 ## Configuración global
 ```javascript
 angular.module('app').run(['mdCrudService', function (mdCrudService) {    
     mdCrudService.setDefaultOptions({
-        rootApi: 'http://fakerestapi.azurewebsites.net/api',
-        methodPatch: 'PUT'
+        rootApi: '/api',
+        methodGet: 'GET',
+        methodPost: 'POST',
+        methodPatch: 'PATCH',
+        methodDelete: 'DELETE',
+        urlGet: '{{rootApi}}/{{entity}}',
+        urlGetById: '{{rootApi}}/{{entity}}/{{id}}',
+        urlPost: '{{rootApi}}/{{entity}}',
+        urlPatch: '{{rootApi}}/{{entity}}/{{id}}',
+        urlDelete: '{{rootApi}}/{{entity}}/{{id}}',
+        functionHttp: function(options, method) { return $q(...) },
+        functionData: function(response, resolve, reject, method) { resolve(response) },
+        formType: 'inline',
+        deleteConfirm: true,
+        tableLimit: 10,
+        limitOptions: [10, 20, 30],
+        translate: function(text) { return text; },
+        autoRefresh: true,
+        serverSide: {
+            pageParam: 'page',
+            offsetParam: 'offset',
+            limitParam: 'limit',
+            searchParam: 'search',
+            dataResponse: 'data',
+            totalResponse: 'total'
+        }
+    });
+    mdCrudService.setDefaultOptions({
+        editTitle: 'Edit',
+        detailTitle: 'Detail',
+        createTitle: 'Create',
+        deleteError: 'Error while trying to delete row',
+        deleteErrorTitle: 'Error deleting',
+        deleteConfirmTitle: 'Delete',
+        deleteConfirmMessage: 'Are you sure you want to delete the row?',
+        tablePaginationPage: 'Page',
+        tablePaginationRowsPerPage: 'Rows per page:',
+        tablePaginationOf: 'of',
+        createOption: 'Create',
+        btnConfirmOk: 'Yes',
+        btnConfirmCancel: 'No',
+        btnAlertOk: 'Ok',
+        generalErrorTitle: 'Error',
+        messageRequired: 'Required',
+        messageMinlength: 'Min length',
+        messageMaxlength: 'Max length',
+        messagePattern: 'Invalid input format.',
+        messageMin: 'Min value',
+        messageMax: 'Max value',
+        messageMimetype: 'Invalid file type.',
+        messageValid: 'Invalid input format.',
+        messageMindate: 'Min date',
+        messageMaxdate: 'Max date',
+        formCancel: 'Cancel',
+        formSubmit: 'Save'
     });
 }]);
 ```

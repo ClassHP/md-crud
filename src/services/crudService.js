@@ -29,7 +29,7 @@
                     }, function (response) {
                         reject(response.data);
                     });
-                })
+                });
             },
             functionData: function(response, resolve, reject, method) { 
                 resolve(response);
@@ -79,7 +79,7 @@
             messageMindate: 'Min date',
             messageMaxdate: 'Max date',
             formCancel: 'Cancel',
-            formSubmit: 'Save',
+            formSubmit: 'Save'
         };
 
         var templateColumns = {
@@ -91,7 +91,7 @@
             datetime: '<span>{{ row[field.name] | date:"short" }}</span>',
             select: '<span md-crud-template="getTemplateSelect(field, row)"></span>',
             text: '<span>{{translate(row[field.name])}}</span>',
-            button: '<md-button ng-class="field.class" ng-click="field.onClick(row, $event) || $event.stopPropagation()">{{translate(field.label)}}</md-button>',
+            button: '<md-button ng-class="field.class" ng-click="field.onClick(row, $event) || $event.stopPropagation()"><md-icon ng-if="field.icon">{{field.icon}}</md-icon><md-tooltip md-autohide ng-if="field.tooltip">{{translate(field.tooltip)}}</md-tooltip>{{translate(field.label)}}</md-button>',
             default: '<span>{{translate(row[field.name])}}</span>'
         };
 
@@ -152,7 +152,7 @@
                 };
                 angular.extend(httpOptions, tools.removeNull(options));
                 return defaultOptions.functionHttp(httpOptions, 'delete');
-            },        
+            }      
         };
     }
 })();

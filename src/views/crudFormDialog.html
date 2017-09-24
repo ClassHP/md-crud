@@ -1,4 +1,4 @@
-﻿<md-dialog aria-label="Editar" flex="50">
+﻿<md-dialog aria-label="Editar" flex="{{options.windowFlex}}">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h2>{{ formTitle }}</h2>
@@ -9,7 +9,7 @@
         </div>
     </md-toolbar>
     <md-dialog-content>
-        <md-crud-form options="options" ng-model="item" on-open="onOpen" on-edit="onEdit" on-cancel="onCancelDialog" 
-                   on-sussces="onSusscesDialog" template-url="templateUrl" editable="formEditable"></md-crud-form>
+        <md-crud-form options="options" ng-model="item" on-open="onOpen" on-edit="onEdit" on-detail="onDetail" on-cancel="onCancelDialog" 
+                   on-sussces="onSusscesDialog" template-url="templateUrl" editable="formEditable" model-copy="true"></md-crud-form>
     </md-dialog-content>
 </md-dialog>

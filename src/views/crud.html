@@ -1,69 +1,65 @@
-﻿<div layout-margin layout-padding>
-    <div>
-        <div class="md-default" layout="row" layout-align="start center">
-            <md-button class="md-raised md-primary" ng-click="table.create($event)" ng-if="!options.noCreate" ng-disabled="isLoading">{{translate(text.createOption)}}</md-button>
-            <div ng-if="options.templateTools" ng-include="options.templateTools" flex layout="row"></div>
-            <div flex></div>
-            <div layout="row" ng-if="!options.noSearch" style="margin-bottom:5px">
-                <md-button class="md-icon-button md-primary" ng-disabled="true">
-                    <md-icon>&#xE8B6;</md-icon>
-                </md-button>
-                <md-autocomplete md-search-text="searchText" type="search" placeholder="" md-items="item in []" 
-                md-search-text-change="onSearchTextChange(searchText)" md-delay="searchDelay"></md-autocomplete>
-            </div>
-        </div>
-        <div ng-if="formType == 'inline' && rowCreate">
-            <md-card flex layout-fill style="background-color: white">
-                <md-crud-form options="options" ng-model="rowCreate" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel"
-                            on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="true"></md-crud-form>
-            </md-card>
-            <br/>
-        </div>
-        <md-table-container md-whiteframe="1">
-            <table data-md-table md-progress="table.promise">
-                <thead md-head data-md-order="table.order" md-on-reorder="table.refresh" style="background-color: white">
-                    <tr md-row>
-                        <th md-column ng-repeat="field in fields" ng-if="field.columnHiden != true">{{translate(field.label)}}</th>
-                        <th md-column style="min-width:132px;width:132px" ng-if="!options.noDelete && !options.noEdit"></th>
-                        <th md-column style="min-width:60px;width:60px" ng-if="(options.noEdit && !options.noDelete) || (!options.noEdit && options.noDelete)"></th>
-                    </tr>
-                </thead>
-                <tbody md-body>
-                    <tr md-row md-select="row" ng-repeat-start="row in (options.serverSide ? table.rows : (table.rows | filter:searchText | limitTo: table.limit: (table.page - 1) * table.limit))"
-                        ng-mouseover="row.mouserover=true" ng-mouseleave="row.mouserover=false" 
-                        ng-class="{ 'md-selected': row.mouserover || rowSelected == row }"
-                        ng-click="table.detail(row, $event)" style="cursor:pointer">
-                        <td md-cell ng-repeat="field in fields" ng-if="field.columnHiden != true" md-crud-template="getTemplateColumn(field, row)"></td>
-                        <td md-cell ng-if="!options.noDelete || !options.noEdit">
-                            <md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.edit(row, $event)" ng-if="!options.noEdit">
-                                <md-icon>&#xE3C9;</md-icon>
-                            </md-button>
-                            <md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.delete(row[options.id], $event)" ng-if="!options.noDelete">
-                                <md-icon>&#xE92B;</md-icon>
-                            </md-button>
-                        </td>
-                    </tr>
-                    <tr ng-repeat-end ng-if="rowSelected == row">
-                        <td colspan="{{fields.length + 1}}" style="max-width: 0">
-                            <md-card layout-fill style="background-color: white">
-                                <md-crud-form ng-if="formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" 
-                                        on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="formEditable"></md-crud-form>
-                                <md-crud-form ng-if="!formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-cancel="onCancel" 
-                                        on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="formEditable"></md-crud-form>
-                            </md-card>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <md-table-pagination md-limit="table.limit"
-                                 md-limit-options="table.limitOptions"
-                                 md-page="table.page"
-                                 md-total="{{options.serverSide ? table.total : (table.rows | filter:searchText).length}}"
-                                 md-page-select
-                                 md-label="{{table.labels()}}"
-                                 style="background-color: white"
-                                 md-on-paginate="table.onPaginate">
-            </md-table-pagination>
-        </md-table-container>
+﻿<div class="md-default" layout="row" layout-align="start center">
+    <md-button class="md-raised md-primary" ng-click="table.create($event)" ng-if="!options.noCreate" ng-disabled="isLoading">{{translate(text.createOption)}}</md-button>
+    <div ng-if="options.templateTools" ng-include="options.templateTools" flex layout="row"></div>
+    <div flex></div>
+    <div layout="row" ng-if="!options.noSearch" style="margin-bottom:5px">
+        <md-button class="md-icon-button md-primary" ng-disabled="true">
+            <md-icon>&#xE8B6;</md-icon>
+        </md-button>
+        <md-autocomplete md-search-text="searchText" type="search" placeholder="" md-items="item in []" 
+        md-search-text-change="onSearchTextChange(searchText)" md-delay="searchDelay"></md-autocomplete>
     </div>
 </div>
+<div ng-if="formType == 'inline' && rowCreate">
+    <md-card flex layout-fill style="background-color: white">
+        <md-crud-form options="options" ng-model="rowCreate" on-open="onOpen" on-edit="onEdit" on-detail="onDetail" on-cancel="onCancel"
+                    on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="true"></md-crud-form>
+    </md-card>
+    <br/>
+</div>
+<md-table-container md-whiteframe="1">
+    <table data-md-table md-progress="table.promise">
+        <thead md-head data-md-order="table.order" md-on-reorder="table.refresh" style="background-color: white">
+            <tr md-row>
+                <th md-column ng-repeat="field in fields" ng-if="!field.columnHiden && !field.columnHidden">{{translate(field.columnHeader || field.label)}}</th>
+                <th md-column style="min-width:132px;width:132px" ng-if="!options.noDelete && !options.noEdit"></th>
+                <th md-column style="min-width:60px;width:60px" ng-if="(options.noEdit && !options.noDelete) || (!options.noEdit && options.noDelete)"></th>
+            </tr>
+        </thead>
+        <tbody md-body>
+            <tr md-row md-select="row" ng-repeat-start="row in (options.serverSide ? table.rows : (table.rows | filter:searchText | limitTo: table.limit: (table.page - 1) * table.limit))"
+                ng-mouseover="row.mouserover=true" ng-mouseleave="row.mouserover=false" 
+                ng-class="{ 'md-selected': row.mouserover || rowSelected == row }"
+                ng-click="table.detail(row, $event)" style="cursor:pointer">
+                <td md-cell ng-repeat="field in fields" ng-if="!field.columnHiden && !field.columnHidden" ng-style="field.styleCell" md-crud-template="getTemplateColumn(field, row)"></td>
+                <td md-cell ng-if="!options.noDelete || !options.noEdit">
+                    <md-button class="md-icon-button md-accent" ng-show="row.mouserover || rowSelected == row " ng-click="table.edit(row, $event)" ng-if="!options.noEdit">
+                        <md-icon>&#xE3C9;</md-icon>
+                    </md-button>
+                    <md-button class="md-icon-button md-warn" ng-show="row.mouserover || rowSelected == row " ng-click="table.delete(row[options.id], $event)" ng-if="!options.noDelete">
+                        <md-icon>&#xE92B;</md-icon>
+                    </md-button>
+                </td>
+            </tr>
+            <tr ng-repeat-end ng-if="rowSelected == row">
+                <td colspan="{{countFieldsColums()}}" style="max-width: 0">
+                    <md-card layout-fill style="background-color: white">
+                        <md-crud-form ng-if="formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-detail="onDetail" on-cancel="onCancel" 
+                                on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="formEditable" model-copy="true"></md-crud-form>
+                        <md-crud-form ng-if="!formEditable" options="options" ng-model="row" on-open="onOpen" on-edit="onEdit" on-detail="onDetail" on-cancel="onCancel" 
+                                on-sussces="onSussces" on-submit="onSubmit" template-url="templateUrl" editable="formEditable" model-copy="true"></md-crud-form>
+                    </md-card>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <md-table-pagination ng-if="!options.noPaginate" md-limit="table.limit"
+                            md-limit-options="table.limitOptions"
+                            md-page="table.page"
+                            md-total="{{options.serverSide ? table.total : (table.rows | filter:searchText).length}}"
+                            md-page-select
+                            md-label="{{table.labels()}}"
+                            style="background-color: white"
+                            md-on-paginate="table.onPaginate">
+    </md-table-pagination>
+</md-table-container>

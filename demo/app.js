@@ -57,6 +57,10 @@ function($scope, $timeout, mdCrudService, mdCrudToolsService){
         noSearch: false,
         fields: [
             {
+                template: '<div>Prueba de <strong>template</strong></div>',
+                columnHiden: true
+            },
+            {
                 name: 'Title',
                 label: 'Title',
                 type: 'text',
@@ -68,11 +72,16 @@ function($scope, $timeout, mdCrudService, mdCrudToolsService){
                 type: 'select',
                 columnHiden: true,
                 detailHiden: true,
-                data: function () {
-                    return types;
+                data: [
+                    { value: 'text', text: 'Text' },
+                    { value: 'integer', text: 'Integer' },
+                    { value: 'decimal', text: 'Decimal' }
+                ],
+                onOpen: function () {
+                    
                 },
                 onChange: function(item) {
-                    mdCrudToolsService.showAlert('Test', 'Test');
+                    //mdCrudToolsService.showAlert('Test', 'Test');
                 },
                 flex: '25'
             },
@@ -88,14 +97,24 @@ function($scope, $timeout, mdCrudService, mdCrudToolsService){
                 label: 'Publish date',
                 type: 'datetime',
                 required: true,
-                columnTemplate: '<strong>{{PublishDate | date:"short"}}</strong>',
-                flex: '50'
+                columnTemplate: '<strong>{{row.PublishDate | date:"short"}}</strong>',
+                flex: 'none'
+            },
+            {
+                label: 'Test',
+                type: 'button',
+                class: 'md-raised',
+                flex: '25',
+                onClick: function(item) {
+                    mdCrudToolsService.showAlert('Test', 'Test');
+                }
             },
             {
                 name: 'Description',
                 label: 'Description',
                 type: 'textarea',
                 required: true,
+                columnTemplate: '{{row.Description.substring(0,50) + "..."}}',
                 errorMessage: function(value, item) {
                     if(item.Title != value)
                         return "El titulo y la descripcion deben ser iguales.";
@@ -107,14 +126,6 @@ function($scope, $timeout, mdCrudService, mdCrudToolsService){
                 type: 'textarea',
                 required: true,
                 columnHiden: true,
-            },
-            {
-                label: 'Test',
-                type: 'button',
-                class: 'md-raised',
-                onClick: function(item) {
-                    mdCrudToolsService.showAlert('Test', 'Test');
-                }
             }
         ],
         form: {
@@ -124,7 +135,9 @@ function($scope, $timeout, mdCrudService, mdCrudToolsService){
         },
         http: {
             rootApi: 'https://fakerestapi.azurewebsites.net/api',
-            methodPatch: 'PUT'
+            methodPatch: 'PUT',
+            urlGetById: '{{rootApi}}/{{entity}}/{{id}}?entity={{getEntity()}}',
+            getEntity: function () { return $scope.crudOptions.entity; }
         }
     };    
     
@@ -141,7 +154,7 @@ function($scope, $timeout, mdCrudService, mdCrudToolsService){
                 name: 'thumbnail',
                 label: 'Image',
                 type: 'template',
-                columnTemplate: '<image src="{{thumbnail.path + "/standard_medium." + thumbnail.extension}}" style="max-height:90px"></image>'
+                columnTemplate: '<image src="{{row.thumbnail.path + "/standard_medium." + row.thumbnail.extension}}" style="max-height:90px"></image>'
             },
             {
                 name: 'name',
@@ -183,38 +196,95 @@ function($scope, $timeout, mdCrudService, mdCrudToolsService){
 
     $scope.crudOptions3 = {
         entity: 'people',
-        id: 'id',
-        serverSide: true,
+        id: 'url',
         noEdit: true,
         noDelete: true,
         noCreate: true,
-        noDetail: true,
-        noSearch: false,
         fields: [
             {
-                name: 'first_name',
-                label: 'Firs name',
-                type: 'text',
-                required: true
+                name: 'name',
+                label: 'Name',
+                flex: 'none'
             },
             {
-                name: 'last_name',
-                label: 'Last name',
-                type: 'text',
-                required: true
+                name: 'height',
+                label: 'Height',
+                flex: 'none'
             },
             {
-                name: 'avatar',
-                label: 'Avatar',
-                type: 'image',
-                readonly: true
-            }
+                name: 'mass',
+                label: 'Mass',
+                flex: 'none'
+            },
+            {
+                name: 'hair_color',
+                label: 'Hair color',
+                flex: 'none'
+            },
+            {
+                name: 'skin_color',
+                label: 'Skin color',
+                flex: 'none'
+            },
+            {
+                name: 'eye_color',
+                label: 'Eye color',
+                flex: 'none'
+            },
+            {
+                name: 'birth_year',
+                label: 'Birth year',
+                flex: 'none'
+            },
+            {
+                name: 'gender',
+                label: 'Gender',
+                flex: 'none'
+            },
+            {
+                //templateUrl: 'templatePlanet.html',
+                template: `
+                    <strong>Homeworld</strong>
+                    <md-crud-form-base flex layout="row" layout-wrap ng-if="item.homeworldData"
+                        options="field.homelandOptions" ng-model="item.homeworldData" form-type="detail" 
+                        editable="false" form-crud="formCrud" is-loading="false">
+                    </md-crud-form-base>
+                `,
+                flex: 100,
+                columnHidden: true,
+                homelandOptions: {
+                    fields: [
+                        { name: 'name', label: 'Name', flex: 'none' },
+                        { name: 'diameter', label: 'Diameter', flex: 'none' },
+                        { name: 'rotation_period', label: 'Rotation period', flex: 'none' },
+                        { name: 'orbital_period', label: 'Orbital period', flex: 'none' },
+                        { name: 'gravity', label: 'Gravity', flex: 'none' },
+                        { name: 'population', label: 'Population', flex: 'none' },
+                        { name: 'climate', label: 'Climate', flex: 'none' },
+                        { name: 'terrain', label: 'Terrain', flex: 'none' },
+                        { name: 'surface_water', label: 'Surface water', flex: 'none' }
+                    ]
+                }
+            },            
         ],
+        form: {
+            onDetail: function(item) {
+                item.homeworldData = {};
+                mdCrudService.get({ url: item.homeworld }).then(function(response) {
+                    angular.extend(item.homeworldData, response.data);
+                });
+            }
+        },
+        serverSide: {
+            pageParam: 'page',
+            searchParam: 'search',
+            dataResponse: 'results',
+            totalResponse: 'count'
+        },
         http: {
             rootApi: 'https://swapi.co/api',
-            functionData: function (response, resolve, reject) {
-                resolve(response.data.results || response.data);
-            }
+            urlGetById: '{{id}}',
+            params: { format: 'json' }
         }
     };  
 }]);
